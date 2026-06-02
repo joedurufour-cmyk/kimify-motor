@@ -417,8 +417,10 @@
 
 <script>
 const API = 'https://ancla-backend.onrender.com'
-const PIN = '1979'  // Tu año — cámbialo cuando quieras
+const PIN = '1979'
 let COUNTRY = 'CO'
+let currentUser = null
+let bingeList = []
 let myReturns = JSON.parse(localStorage.getItem('ancla_returns') || '[]')
 let evalQueue = JSON.parse(localStorage.getItem('ancla_eval') || '[]')
 let prevScreen = 'screen-home'
@@ -993,7 +995,8 @@ document.querySelectorAll('#genre-cat .genre-pill').forEach(pill => {
 
     <!-- KPI DE PLATAFORMAS -->
     <div id="platform-kpi" style="margin:0 16px 16px;display:none">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px">¿Qué plataforma te conviene?</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px">¿Qué plataforma te conviene?</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--anchor-dim);letter-spacing:1px;margin-bottom:10px;padding:6px 8px;border:1px solid var(--border);border-radius:2px">⚠ DEMO — Plataformas aproximadas. Datos reales próximamente.</div>
       <div id="kpi-cards" style="display:flex;flex-direction:column;gap:8px"></div>
       <div style="margin-top:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:3px">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:2px;margin-bottom:6px">TIEMPO TOTAL DEL BINGE</div>
@@ -1037,12 +1040,9 @@ document.querySelectorAll('#genre-cat .genre-pill').forEach(pill => {
 
 <script>
 // ── SUPABASE CONFIG ───────────────────────
-const SUPA_URL = 'https://qdvxwofgdediikkgilum.supa.co'
+const SUPA_URL = 'https://qdvxwofgdediikkgilum.supabase.co'
 const SUPA_KEY = 'sb_publishable_DHQWRa9SQqPymxRWF3v23w_ZM6izS1t'
-const supa = window.supa.createClient(SUPA_URL, SUPA_KEY)
-
-let currentUser = null
-let bingeList = []
+const supa = window.supabase.createClient(SUPA_URL, SUPA_KEY)
 
 // ── AUTH INIT ─────────────────────────────
 async function initAuth() {
