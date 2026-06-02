@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ANCLA — Las películas que no te sueltan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --deep: #0f0f0f;
+    --surface: #141414;
+    --card: #1a1a1a;
+    --border: #262626;
+    --muted: #333333;
+    --text-dim: #666666;
+    --text-mid: #999999;
+    --text: #cccccc;
+    --white: #f0ede8;
+    --anchor: #c8a96e;
+    --anchor-dim: #8a7048;
+    --anchor-glow: rgba(200, 169, 110, 0.12);
+    --red-marker: #8b2020;
+    --blue-marker: #1a3a5c;
+    --green-free: #1a3a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* PHONE FRAME */
+  .device-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background: #050505;
+    background-image: radial-gradient(ellipse at 30% 20%, rgba(200,169,110,0.04) 0%, transparent 60%);
+  }
+
+  .phone {
+    width: 390px;
+    min-height: 844px;
+    background: var(--black);
+    border-radius: 44px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #0f0f0f,
+      0 0 0 9px #1a1a1a,
+      0 40px 80px rgba(0,0,0,0.8),
+      inset 0 0 0 1px rgba(255,255,255,0.03);
+  }
+
+  .notch {
+    width: 120px;
+    height: 34px;
+    background: #050505;
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 100;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    flex-direction: column;
+    min-height: 810px;
+    background: var(--black);
+  }
+  .screen.active { display: flex; }
+
+  /* SPLASH */
+  .splash {
+    justify-content: center;
+    align-items: center;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .splash::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(200,169,110,0.08) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+  }
+
+  .splash-content {
+    text-align: center;
+    z-index: 2;
+    animation: fadeUp 1.2s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .anchor-symbol {
+    font-size: 48px;
+    margin-bottom: 24px;
+    display: block;
+    filter: sepia(1) saturate(0.8) brightness(0.9);
+  }
+
+  .logo-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .logo-tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--anchor);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .splash-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--anchor);
+    margin: 32px auto;
+    opacity: 0.5;
+  }
+
+  .splash-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    max-width: 240px;
+    margin: 0 auto 48px;
+  }
+
+  .btn-primary {
+    background: var(--anchor);
+    color: var(--black);
+    border: none;
+    padding: 16px 48px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: var(--white); transform: translateY(-1px); }
+
+  /* HEADER */
+  .header {
+    padding: 20px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--black);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: 4px;
+  }
+
+  .header-country {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--anchor);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .country-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--anchor);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* SCROLL AREA */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* TODAY SECTION */
+  .section-header {
+    padding: 24px 24px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .section-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--anchor-dim);
+  }
+
+  /* FILM CARD — FEATURED */
+  .film-featured {
+    margin: 0 16px 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .film-featured:hover { border-color: var(--anchor-dim); }
+
+  .film-poster-area {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+  }
+
+  .film-poster-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7) contrast(1.1);
+  }
+
+  .film-poster-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+  }
+
+  .film-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 140px;
+    background: linear-gradient(transparent, var(--card));
+  }
+
+  .film-type-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-gravitacional {
+    background: rgba(139, 32, 32, 0.85);
+    color: #ffaaaa;
+    border: 1px solid rgba(139, 32, 32, 0.5);
+  }
+
+  .badge-finita {
+    background: rgba(26, 58, 92, 0.85);
+    color: #88bbee;
+    border: 1px solid rgba(26, 58, 92, 0.5);
+  }
+
+  .badge-franquicia {
+    background: rgba(26, 58, 42, 0.85);
+    color: #88ddaa;
+    border: 1px solid rgba(26, 58, 42, 0.5);
+  }
+
+  .film-body {
+    padding: 16px 18px 18px;
+  }
+
+  .film-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .film-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .film-editorial {
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .film-editorial em {
+    color: var(--white);
+    font-style: normal;
+  }
+
+  .film-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--anchor);
+  }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .return-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .return-icon {
+    font-size: 14px;
+  }
+
+  .return-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--anchor);
+    letter-spacing: 1px;
+  }
+
+  /* STREAMING BADGES */
+  .streaming-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .streamer-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+
+  .streamer-sub {
+    background: rgba(200, 169, 110, 0.1);
+    color: var(--anchor);
+    border-color: rgba(200, 169, 110, 0.2);
+  }
+  .streamer-sub:hover { background: rgba(200, 169, 110, 0.2); transform: translateY(-1px); }
+
+  .streamer-free {
+    background: rgba(26, 58, 42, 0.4);
+    color: #88ddaa;
+    border-color: rgba(136, 221, 170, 0.2);
+  }
+
+  .streamer-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .btn-return {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    padding: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-return:hover {
+    border-color: var(--anchor-dim);
+    color: var(--anchor);
+    background: var(--anchor-glow);
+  }
+  .btn-return.pressed {
+    border-color: var(--anchor);
+    color: var(--anchor);
+    background: var(--anchor-glow);
+  }
+
+  /* FILM CARD — COMPACT */
+  .film-compact {
+    margin: 0 16px 1px;
+    padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    border-radius: 2px;
+  }
+  .film-compact:hover { border-color: var(--muted); }
+
+  .compact-poster {
+    width: 52px;
+    height: 76px;
+    background: var(--surface);
+    border-radius: 2px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    border: 1px solid var(--border);
+  }
+
+  .compact-body { flex: 1; min-width: 0; }
+
+  .compact-type {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .compact-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .compact-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .compact-streamers {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .compact-streamer {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--anchor-dim);
+    letter-spacing: 1px;
+    background: rgba(200,169,110,0.08);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .compact-return {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* GENRE PILLS */
+  .genre-scroll {
+    padding: 0 16px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .genre-scroll::-webkit-scrollbar { display: none; }
+
+  .genre-pill {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .genre-pill:hover { border-color: var(--anchor-dim); color: var(--anchor); }
+  .genre-pill.active {
+    border-color: var(--anchor);
+    color: var(--anchor);
+    background: var(--anchor-glow);
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    padding: 12px 0 28px;
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid var(--border);
+    background: var(--black);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px 16px;
+    transition: all 0.15s;
+  }
+
+  .nav-icon { font-size: 20px; filter: grayscale(1); opacity: 0.4; transition: all 0.15s; }
+  .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .nav-item.active .nav-icon { filter: none; opacity: 1; }
+  .nav-item.active .nav-label { color: var(--anchor); }
+
+  /* DIVIDER */
+  .section-divider {
+    margin: 8px 16px;
+    height: 1px;
+    background: var(--border);
+    opacity: 0.5;
+  }
+
+  /* FREEMIUM BANNER */
+  .freemium-banner {
+    margin: 8px 16px 16px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(200,169,110,0.06), rgba(200,169,110,0.02));
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .banner-text {
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    color: var(--text-mid);
+    font-style: italic;
+  }
+
+  .banner-cta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--anchor);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 1px solid var(--anchor-dim);
+    padding-bottom: 1px;
+  }
+
+  /* OUTSIDE PHONE — BRANDING */
+  .outside-brand {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    opacity: 0.3;
+  }
+
+  .outside-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--anchor);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .outside-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  /* DETAIL SCREEN */
+  .detail-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-btn {
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--anchor);
+    transition: transform 0.15s;
+  }
+  .back-btn:hover { transform: translateX(-2px); }
+
+  .detail-poster-full {
+    width: 100%;
+    height: 280px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 90px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .detail-poster-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160px;
+    background: linear-gradient(transparent, var(--black));
+  }
+
+  .detail-type-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 5px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .detail-body { padding: 20px 20px 100px; }
+
+  .detail-genre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .detail-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .detail-year-dir {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .detail-scores {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .score-block {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .score-block:last-child { border-right: none; }
+
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--anchor);
+    display: block;
+  }
+
+  .score-src {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .detail-editorial-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--anchor-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .detail-editorial-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .detail-editorial {
+    font-family: 'Crimson Pro', serif;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  .detail-return-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .return-big-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--anchor);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .return-big-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .streaming-section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .streaming-detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .streamer-row-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .streamer-row-item:hover { border-color: var(--anchor-dim); }
+
+  .streamer-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .streamer-emoji { font-size: 18px; }
+
+  .streamer-info { display: flex; flex-direction: column; gap: 2px; }
+
+  .streamer-name-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--white);
+    letter-spacing: 1px;
+  }
+
+  .streamer-type-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .streamer-arrow {
+    color: var(--anchor);
+    font-size: 16px;
+  }
+
+  .also-liked {
+    margin-top: 8px;
+  }
+
+  .also-liked-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .also-liked-pills {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .also-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .also-emoji { font-size: 20px; }
+
+  .also-info { flex: 1; }
+
+  .also-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+
+  .also-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .nav-screen-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--white);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="device-wrapper">
+  <div class="phone">
+    <div class="notch"></div>
+
+    <!-- SPLASH SCREEN -->
+    <div class="screen active" id="screen-splash">
+      <div class="splash" style="flex:1;display:flex;">
+        <div class="splash-content">
+          <span class="anchor-symbol">⚓</span>
+          <div class="logo-main">ANCLA</div>
+          <div class="logo-tagline">Cine · Criterio · Regreso</div>
+          <div class="splash-divider"></div>
+          <p class="splash-sub">No es lo que está disponible.<br>Es lo que vale tu tiempo.</p>
+          <button class="btn-primary" onclick="goTo('screen-home')">Entrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOME SCREEN -->
+    <div class="screen" id="screen-home">
+      <div class="header">
+        <div class="header-logo">ANCLA</div>
+        <div class="header-country">
+          <div class="country-dot"></div>
+          Colombia · CO
+        </div>
+      </div>
+
+      <div class="scroll-area">
+
+        <!-- Genre Filter -->
+        <div class="section-header">
+          <span class="section-title">Géneros</span>
+        </div>
+        <div class="genre-scroll">
+          <div class="genre-pill active">Todos</div>
+          <div class="genre-pill">Acción con Peso</div>
+          <div class="genre-pill">Terror Psicológico</div>
+          <div class="genre-pill">SciFi de Ideas</div>
+          <div class="genre-pill">Noir & Crimen</div>
+          <div class="genre-pill">Peak TV</div>
+          <div class="genre-pill">Micro Sorpresas</div>
+          <div class="genre-pill">Franquicia con Alma</div>
+        </div>
+
+        <!-- Today Featured -->
+        <div class="section-header">
+          <span class="section-title">Hoy · 3 de 3</span>
+          <span class="section-count">Gratuito</span>
+        </div>
+
+        <!-- FEATURED CARD 1 — Collateral -->
+        <div class="film-featured" onclick="goTo('screen-detail')">
+          <div class="film-poster-area">
+            <div class="film-poster-placeholder" style="background: linear-gradient(135deg, #1a1a2e, #0d1b2a, #1a0a0a);">🌃</div>
+            <div class="film-gradient"></div>
+            <div class="film-type-badge badge-gravitacional">⚓ Gravitacional</div>
+          </div>
+          <div class="film-body">
+            <div class="film-meta">1990s · Acción con Peso · Michael Mann</div>
+            <div class="film-title">Collateral</div>
+            <div class="film-editorial">
+              Mann filmó Los Ángeles de noche con cámaras digitales porque quería capturar esa
+              <em>frialdad fluorescente que nadie pinta</em>. El resultado es un thriller que no
+              tiene prisa porque sabe exactamente adónde va. Foxx hace el trabajo de su vida
+              siendo el hombre más cobarde de la pantalla.
+              <br><br>
+              No es una película de acción. Es una conversación sobre para qué sirve una vida —
+              con jazz de fondo y Tom Cruise haciendo algo que nunca volvió a intentar.
+            </div>
+
+            <div class="film-stats">
+              <div class="stat">
+                <div class="stat-value">86</div>
+                <div class="stat-label">Metacritic</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">7.6</div>
+                <div class="stat-label">IMDb</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">2004</div>
+                <div class="stat-label">Año</div>
+              </div>
+            </div>
+
+            <div class="return-indicator">
+              <span class="return-icon">↩</span>
+              <span class="return-text">1,247 personas volvieron a verla</span>
+            </div>
+
+            <div class="streaming-row">
+              <div class="streamer-badge streamer-sub">
+                <div class="streamer-dot"></div>
+                MAX
+              </div>
+              <div class="streamer-badge streamer-sub">
+                <div class="streamer-dot"></div>
+                Prime Video
+              </div>
+              <div class="streamer-badge streamer-free">
+                <div class="streamer-dot"></div>
+                Pluto TV · Gratis
+              </div>
+            </div>
+
+            <button class="btn-return" id="btn-return-1" onclick="toggleReturn(event, 'btn-return-1')">
+              <span>↩</span> Volví a verla
+            </button>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- COMPACT CARD 2 — The Thing -->
+        <div class="film-compact">
+          <div class="compact-poster">🧊</div>
+          <div class="compact-body">
+            <div class="compact-type">⚓ Gravitacional · Terror Psicológico</div>
+            <div class="compact-title">The Thing</div>
+            <div class="compact-meta">Carpenter · 1982 · 1980s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">Netflix</div>
+              <div class="compact-streamer">Prime Video</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">87</div>
+            <div class="compact-return">↩ 2.1k</div>
+          </div>
+        </div>
+
+        <!-- COMPACT CARD 3 — True Detective S01 -->
+        <div class="film-compact">
+          <div class="compact-poster">🌿</div>
+          <div class="compact-body">
+            <div class="compact-type">⚓ Gravitacional · Peak TV</div>
+            <div class="compact-title">True Detective S01</div>
+            <div class="compact-meta">Pizzolatto · 2014 · 2010s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">MAX</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">Serie</div>
+            <div class="compact-return">↩ 3.4k</div>
+          </div>
+        </div>
+
+        <div class="section-divider" style="margin-top:1px;"></div>
+
+        <!-- FREEMIUM BANNER -->
+        <div class="freemium-banner">
+          <div class="banner-text">+4,800 títulos curados te esperan</div>
+          <div class="banner-cta">Premium</div>
+        </div>
+
+      </div><!-- /scroll-area -->
+
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-icon">⚓</div>
+          <div class="nav-label">Hoy</div>
+        </div>
+        <div class="nav-item" onclick="goTo('screen-catalog')">
+          <div class="nav-icon">🎬</div>
+          <div class="nav-label">Catálogo</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">↩</div>
+          <div class="nav-label">Mis Regresos</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">💎</div>
+          <div class="nav-label">Joyas</div>
+        </div>
+      </div>
+    </div><!-- /home -->
+
+    <!-- DETAIL SCREEN -->
+    <div class="screen" id="screen-detail">
+      <div class="detail-header">
+        <div class="back-btn" onclick="goTo('screen-home')">←</div>
+        <div class="nav-screen-title">Ficha</div>
+      </div>
+
+      <div class="scroll-area">
+        <div class="detail-poster-full" style="background:linear-gradient(135deg,#1a1a2e,#0d1b2a,#1a0a0a);">
+          🌃
+          <div class="detail-poster-overlay"></div>
+          <div class="detail-type-badge badge-gravitacional">⚓ Gravitacional</div>
+        </div>
+
+        <div class="detail-body">
+          <div class="detail-genre">Acción con Peso · 1990s · Michael Mann</div>
+          <div class="detail-title">Collateral</div>
+          <div class="detail-year-dir">2004 · 120 min · EE.UU.</div>
+
+          <div class="detail-scores">
+            <div class="score-block">
+              <span class="score-num">86</span>
+              <span class="score-src">Metacritic</span>
+            </div>
+            <div class="score-block">
+              <span class="score-num">7.6</span>
+              <span class="score-src">IMDb</span>
+            </div>
+            <div class="score-block">
+              <span class="score-num">87%</span>
+              <span class="score-src">RT Críticos</span>
+            </div>
+          </div>
+
+          <div class="detail-editorial-label">Criterio ANCLA</div>
+
+          <div class="detail-editorial">
+            Mann filmó Los Ángeles de noche con cámaras digitales porque quería capturar esa frialdad fluorescente que nadie pinta. El resultado es un thriller que no tiene prisa porque sabe exactamente adónde va. Foxx hace el trabajo de su vida siendo el hombre más cobarde de la pantalla.
+            <br><br>
+            No es una película de acción. Es una conversación sobre para qué sirve una vida — con jazz de fondo y Tom Cruise haciendo algo que nunca volvió a intentar.
+          </div>
+
+          <div class="detail-return-section">
+            <span class="return-big-num">1,247</span>
+            <span class="return-big-label">Personas volvieron a verla</span>
+            <button class="btn-return" id="btn-return-detail" onclick="toggleReturn(event, 'btn-return-detail')" style="max-width:220px;margin:0 auto;">
+              <span>↩</span> Volví a verla
+            </button>
+          </div>
+
+          <div class="streaming-section-label">Disponible en Colombia</div>
+          <div class="streaming-detail-row">
+            <div class="streamer-row-item">
+              <div class="streamer-name-row">
+                <div class="streamer-emoji">🎬</div>
+                <div class="streamer-info">
+                  <div class="streamer-name-text">MAX</div>
+                  <div class="streamer-type-text">Suscripción incluida</div>
+                </div>
+              </div>
+              <div class="streamer-arrow">→</div>
+            </div>
+            <div class="streamer-row-item">
+              <div class="streamer-name-row">
+                <div class="streamer-emoji">📦</div>
+                <div class="streamer-info">
+                  <div class="streamer-name-text">Prime Video</div>
+                  <div class="streamer-type-text">Suscripción incluida</div>
+                </div>
+              </div>
+              <div class="streamer-arrow">→</div>
+            </div>
+            <div class="streamer-row-item" style="border-color:rgba(136,221,170,0.2);">
+              <div class="streamer-name-row">
+                <div class="streamer-emoji">📺</div>
+                <div class="streamer-info">
+                  <div class="streamer-name-text" style="color:#88ddaa;">Pluto TV</div>
+                  <div class="streamer-type-text" style="color:#88ddaa;">Gratis · sin registro</div>
+                </div>
+              </div>
+              <div class="streamer-arrow" style="color:#88ddaa;">→</div>
+            </div>
+          </div>
+
+          <div class="also-liked">
+            <div class="also-liked-label">La tribu también volvió a</div>
+            <div class="also-liked-pills">
+              <div class="also-pill">
+                <div class="also-emoji">🔥</div>
+                <div class="also-info">
+                  <div class="also-title">Heat</div>
+                  <div class="also-meta">Mann · 1995 · ↩ 3,891</div>
+                </div>
+                <div style="color:var(--anchor);font-size:12px;">→</div>
+              </div>
+              <div class="also-pill">
+                <div class="also-emoji">🕵️</div>
+                <div class="also-info">
+                  <div class="also-title">Manhunter</div>
+                  <div class="also-meta">Mann · 1986 · ↩ 892</div>
+                </div>
+                <div style="color:var(--anchor);font-size:12px;">→</div>
+              </div>
+              <div class="also-pill">
+                <div class="also-emoji">🌆</div>
+                <div class="also-info">
+                  <div class="also-title">Enemy</div>
+                  <div class="also-meta">Villeneuve · 2013 · ↩ 1,104</div>
+                </div>
+                <div style="color:var(--anchor);font-size:12px;">→</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /detail -->
+
+    <!-- CATALOG SCREEN -->
+    <div class="screen" id="screen-catalog">
+      <div class="header">
+        <div class="back-btn" onclick="goTo('screen-home')">←</div>
+        <div class="nav-screen-title">Catálogo Curado</div>
+        <div class="header-country">
+          <div class="country-dot"></div>
+          CO
+        </div>
+      </div>
+
+      <div class="scroll-area">
+        <div class="section-header">
+          <span class="section-title">Por Era</span>
+        </div>
+        <div class="genre-scroll">
+          <div class="genre-pill active">Todas las Eras</div>
+          <div class="genre-pill">1960s–70s</div>
+          <div class="genre-pill">1980s</div>
+          <div class="genre-pill">1990s</div>
+          <div class="genre-pill">2000s</div>
+          <div class="genre-pill">2010s</div>
+          <div class="genre-pill">Contemporánea</div>
+        </div>
+
+        <div class="section-header" style="padding-top:8px;">
+          <span class="section-title">Gravitacionales · Mayor Regreso</span>
+          <span class="section-count">4,847</span>
+        </div>
+
+        <!-- Catalog items -->
+        <div class="film-compact">
+          <div class="compact-poster">🔥</div>
+          <div class="compact-body">
+            <div class="compact-type">⚓ Gravitacional · Acción con Peso</div>
+            <div class="compact-title">Heat</div>
+            <div class="compact-meta">Mann · 1995 · 1990s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">MAX</div>
+              <div class="compact-streamer">Prime Video</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">86</div>
+            <div class="compact-return">↩ 3.9k</div>
+          </div>
+        </div>
+
+        <div class="film-compact">
+          <div class="compact-poster">🌀</div>
+          <div class="compact-body">
+            <div class="compact-type">✦ Micro Sorpresas</div>
+            <div class="compact-title">The Prestige</div>
+            <div class="compact-meta">Nolan · 2006 · 2000s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">Netflix</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">78</div>
+            <div class="compact-return">↩ 5.2k</div>
+          </div>
+        </div>
+
+        <div class="film-compact">
+          <div class="compact-poster">🎭</div>
+          <div class="compact-body">
+            <div class="compact-type">⚓ Gravitacional · Drama sin Red</div>
+            <div class="compact-title">No Country for Old Men</div>
+            <div class="compact-meta">Coen · 2007 · 2000s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">Paramount+</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">91</div>
+            <div class="compact-return">↩ 4.1k</div>
+          </div>
+        </div>
+
+        <div class="film-compact">
+          <div class="compact-poster">🦂</div>
+          <div class="compact-body">
+            <div class="compact-type">⚓ Gravitacional · Franquicia con Alma</div>
+            <div class="compact-title">Alien</div>
+            <div class="compact-meta">Scott · 1979 · 1970s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">Disney+</div>
+              <div class="compact-streamer">Star+</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">89</div>
+            <div class="compact-return">↩ 6.7k</div>
+          </div>
+        </div>
+
+        <div class="film-compact">
+          <div class="compact-poster">🧠</div>
+          <div class="compact-body">
+            <div class="compact-type">⚓ Gravitacional · SciFi de Ideas</div>
+            <div class="compact-title">Blade Runner 2049</div>
+            <div class="compact-meta">Villeneuve · 2017 · 2010s</div>
+            <div class="compact-streamers">
+              <div class="compact-streamer">Netflix</div>
+              <div class="compact-streamer">Prime Video</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--anchor);font-weight:700;">81</div>
+            <div class="compact-return">↩ 4.8k</div>
+          </div>
+        </div>
+
+        <div class="freemium-banner" style="margin-top:16px;">
+          <div class="banner-text">Ver todo el catálogo</div>
+          <div class="banner-cta">$2.99/mes</div>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item" onclick="goTo('screen-home')">
+          <div class="nav-icon">⚓</div>
+          <div class="nav-label">Hoy</div>
+        </div>
+        <div class="nav-item active">
+          <div class="nav-icon">🎬</div>
+          <div class="nav-label">Catálogo</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">↩</div>
+          <div class="nav-label">Mis Regresos</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">💎</div>
+          <div class="nav-label">Joyas</div>
+        </div>
+      </div>
+    </div><!-- /catalog -->
+
+  </div><!-- /phone -->
+</div>
+
+<div class="outside-brand">
+  <div class="outside-title">ANCLA</div>
+  <div class="outside-sub">Las películas que no te sueltan</div>
+</div>
+
+<script>
+  function goTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    const scrollArea = document.querySelector('#' + screenId + ' .scroll-area');
+    if (scrollArea) scrollArea.scrollTop = 0;
+  }
+
+  function toggleReturn(e, btnId) {
+    e.stopPropagation();
+    const btn = document.getElementById(btnId);
+    btn.classList.toggle('pressed');
+    if (btn.classList.contains('pressed')) {
+      btn.innerHTML = '<span>↩</span> Volví · Registrado';
+    } else {
+      btn.innerHTML = '<span>↩</span> Volví a verla';
+    }
+  }
+
+  // Genre pill toggle
+  document.querySelectorAll('.genre-pill').forEach(pill => {
+    pill.addEventListener('click', function() {
+      const parent = this.closest('.genre-scroll');
+      parent.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
