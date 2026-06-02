@@ -717,16 +717,20 @@ async function onSearch(q) {
   if (!q || q.length < 2) { results.classList.remove('active'); results.innerHTML=''; return }
   searchTimer = setTimeout(async () => {
     try {
-      const r = await fetch(`${API}/films?limit=20`)
+      const r = await fetch(`${API}/search?q=${encodeURIComponent(q)}&country=${COUNTRY}`)
       const d = await r.json()
-      const filtered = d.films.filter(f => f.title.toLowerCase().includes(q.toLowerCase())).slice(0,6)
-      if (!filtered.length) { results.innerHTML='<div class="loading" style="padding:10px;font-size:9px">Sin resultados</div>'; results.classList.add('active'); return }
-      results.innerHTML = filtered.map(f => `
+      const films = d.films || []
+      if (!films.length) {
+        results.innerHTML='<div class="loading" style="padding:10px;font-size:9px">Sin resultados para "'+q+'"</div>'
+        results.classList.add('active')
+        return
+      }
+      results.innerHTML = films.slice(0,6).map(f => `
         <div class="search-result-item" onclick="showDetail(${f.tmdb_id});document.getElementById('search-input').value='';document.getElementById('search-results').classList.remove('active')">
           <div class="search-result-poster">${f.poster_url?`<img src="${f.poster_url}" loading="lazy">`:''}</div>
           <div>
             <div class="search-result-title">${f.title}</div>
-            <div class="search-result-meta">${f.year||''} · ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
+            <div class="search-result-meta">${f.year||''} · ${f.type==='series'?'Serie':'Película'} · ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
           </div>
         </div>`).join('')
       results.classList.add('active')
@@ -740,15 +744,20 @@ async function onSearchCat(q) {
   if (!q || q.length < 2) { results.classList.remove('active'); results.innerHTML=''; return }
   searchTimer = setTimeout(async () => {
     try {
-      const r = await fetch(`${API}/films?limit=20`)
+      const r = await fetch(`${API}/search?q=${encodeURIComponent(q)}&country=${COUNTRY}`)
       const d = await r.json()
-      const filtered = d.films.filter(f => f.title.toLowerCase().includes(q.toLowerCase())).slice(0,8)
-      results.innerHTML = filtered.map(f => `
+      const films = d.films || []
+      if (!films.length) {
+        results.innerHTML='<div class="loading" style="padding:10px;font-size:9px">Sin resultados para "'+q+'"</div>'
+        results.classList.add('active')
+        return
+      }
+      results.innerHTML = films.slice(0,8).map(f => `
         <div class="search-result-item" onclick="showDetail(${f.tmdb_id});document.getElementById('search-cat').value='';document.getElementById('search-results-cat').classList.remove('active')">
           <div class="search-result-poster">${f.poster_url?`<img src="${f.poster_url}" loading="lazy">`:''}</div>
           <div>
             <div class="search-result-title">${f.title}</div>
-            <div class="search-result-meta">${f.year||''}</div>
+            <div class="search-result-meta">${f.year||''} · ${f.type==='series'?'Serie':'Película'}</div>
           </div>
         </div>`).join('')
       results.classList.add('active')
