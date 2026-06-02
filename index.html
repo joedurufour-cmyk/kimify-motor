@@ -1037,16 +1037,16 @@ document.querySelectorAll('#genre-cat .genre-pill').forEach(pill => {
 
 <script>
 // ── SUPABASE CONFIG ───────────────────────
-const SUPA_URL = 'https://qdvxwofgdediikkgilum.supabase.co'
+const SUPA_URL = 'https://qdvxwofgdediikkgilum.supa.co'
 const SUPA_KEY = 'sb_publishable_DHQWRa9SQqPymxRWF3v23w_ZM6izS1t'
-const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY)
+const supa = window.supa.createClient(SUPA_URL, SUPA_KEY)
 
 let currentUser = null
 let bingeList = []
 
 // ── AUTH INIT ─────────────────────────────
 async function initAuth() {
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { session } } = await supa.auth.getSession()
   if (session?.user) {
     currentUser = session.user
     updateNavForUser()
@@ -1074,7 +1074,7 @@ async function authLogin() {
   const password = document.getElementById('auth-password').value
   const msg = document.getElementById('auth-msg')
   msg.textContent = 'Entrando...'
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  const { data, error } = await supa.auth.signInWithPassword({ email, password })
   if (error) { msg.style.color='#ff6666'; msg.textContent = error.message; return }
   currentUser = data.user
   msg.style.color = 'var(--anchor)'
@@ -1089,7 +1089,7 @@ async function authRegister() {
   const password = document.getElementById('auth-password-r').value
   const msg = document.getElementById('auth-msg')
   msg.textContent = 'Creando cuenta...'
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await supa.auth.signUp({
     email, password,
     options: { data: { display_name: name } }
   })
@@ -1100,7 +1100,7 @@ async function authRegister() {
 }
 
 async function authLogout() {
-  await supabase.auth.signOut()
+  await supa.auth.signOut()
   currentUser = null
   goTo('screen-home')
 }
@@ -1281,7 +1281,7 @@ async function addToListado(film) {
   // Runtime: buscar en TMDB o usar default
   const runtime = film.runtime_min || (film.type === 'series' ? 55 : 110)
 
-  const { error } = await supabase.from('user_binge_list').upsert({
+  const { error } = await supa.from('user_binge_list').upsert({
     user_id: currentUser.id,
     film_title: film.title,
     film_year: film.year,
@@ -1295,7 +1295,7 @@ async function addToListado(film) {
 }
 
 async function removeFromListado(id) {
-  await supabase.from('user_binge_list').delete().eq('id', id)
+  await supa.from('user_binge_list').delete().eq('id', id)
   await loadBingeList()
 }
 
@@ -1307,7 +1307,7 @@ async function updateListadoField(id, field, value) {
   calculateKPI()
 
   // Persist to Supabase
-  await supabase.from('user_binge_list').update({ [field]: value }).eq('id', id)
+  await supa.from('user_binge_list').update({ [field]: value }).eq('id', id)
 }
 
 // ── LA TRIBU: REVIEWS ─────────────────────
@@ -1369,7 +1369,7 @@ async function submitReview(tmdbId, filmTitle, filmYear) {
   const text = document.getElementById(`review-text-${tmdbId}`)?.value?.trim()
   if (!text || text.length < 20) { alert('El review debe tener al menos 20 caracteres'); return }
 
-  const { error } = await supabase.from('tribu_reviews').insert({
+  const { error } = await supa.from('tribu_reviews').insert({
     user_id: currentUser.id,
     film_title: filmTitle,
     film_year: filmYear,
