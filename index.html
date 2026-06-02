@@ -12,17 +12,17 @@
     --surface: #141414;
     --card: #1a1a1a;
     --border: #262626;
-    --muted: #333333;
     --text-dim: #666666;
     --text-mid: #999999;
     --text: #cccccc;
     --white: #f0ede8;
     --anchor: #c8a96e;
     --anchor-dim: #8a7048;
-    --anchor-glow: rgba(200, 169, 110, 0.12);
+    --anchor-glow: rgba(200,169,110,0.12);
+    --red: #8b2020;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
   body {
     background: var(--black);
@@ -33,265 +33,212 @@
     margin: 0 auto;
   }
 
-  /* SCREENS */
-  .screen { display: none; flex-direction: column; min-height: 100vh; }
-  .screen.active { display: flex; }
+  .screen { display:none; flex-direction:column; min-height:100vh; }
+  .screen.active { display:flex; }
 
   /* SPLASH */
-  .splash {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: var(--black);
-    background-image: radial-gradient(ellipse at 50% 40%, rgba(200,169,110,0.08) 0%, transparent 70%);
-  }
-
-  .splash-content { text-align: center; padding: 40px 20px; }
-  .anchor-symbol { font-size: 52px; display: block; margin-bottom: 20px; }
-  .logo-main {
-    font-family: 'Playfair Display', serif;
-    font-size: 52px;
-    font-weight: 900;
-    color: var(--white);
-    letter-spacing: 8px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .logo-tagline {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--anchor);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 32px;
-  }
-  .splash-divider { width: 40px; height: 1px; background: var(--anchor); margin: 0 auto 28px; opacity: 0.5; }
-  .splash-sub {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: var(--text-mid);
-    line-height: 1.6;
-    margin-bottom: 48px;
-  }
-  .btn-primary {
-    background: var(--anchor);
-    color: var(--black);
-    border: none;
-    padding: 16px 48px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    font-weight: 500;
-  }
+  .splash { flex:1; display:flex; justify-content:center; align-items:center; background:var(--black); background-image:radial-gradient(ellipse at 50% 40%, rgba(200,169,110,0.08) 0%, transparent 70%); }
+  .splash-content { text-align:center; padding:40px 20px; }
+  .anchor-symbol { font-size:52px; display:block; margin-bottom:20px; }
+  .logo-main { font-family:'Playfair Display',serif; font-size:52px; font-weight:900; color:var(--white); letter-spacing:8px; text-transform:uppercase; margin-bottom:10px; }
+  .logo-tagline { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--anchor); letter-spacing:3px; text-transform:uppercase; margin-bottom:32px; }
+  .splash-divider { width:40px; height:1px; background:var(--anchor); margin:0 auto 28px; opacity:0.5; }
+  .splash-sub { font-family:'Crimson Pro',serif; font-style:italic; font-size:16px; color:var(--text-mid); line-height:1.6; margin-bottom:48px; }
+  .btn-primary { background:var(--anchor); color:var(--black); border:none; padding:16px 48px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; border-radius:2px; font-weight:500; }
 
   /* HEADER */
-  .header {
-    padding: 16px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    background: var(--black);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .header-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--white); letter-spacing: 4px; }
-  .header-country {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--anchor);
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .country-dot { width: 6px; height: 6px; background: var(--anchor); border-radius: 50%; animation: pulse 2s infinite; }
+  .header { padding:14px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); background:var(--black); position:sticky; top:0; z-index:50; gap:10px; }
+  .header-logo { font-family:'Playfair Display',serif; font-size:20px; font-weight:900; color:var(--white); letter-spacing:4px; flex-shrink:0; }
+  .header-country { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--anchor); letter-spacing:1px; display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .country-dot { width:6px; height:6px; background:var(--anchor); border-radius:50%; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
+  /* SEARCH BAR */
+  .search-bar { padding:10px 16px; border-bottom:1px solid var(--border); }
+  .search-input-wrap { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:10px 14px; }
+  .search-icon { color:var(--anchor); font-size:16px; }
+  .search-input { background:none; border:none; color:var(--white); font-family:'IBM Plex Mono',monospace; font-size:12px; width:100%; outline:none; letter-spacing:1px; }
+  .search-input::placeholder { color:var(--text-dim); }
+  .search-results { margin-top:8px; display:none; }
+  .search-results.active { display:block; }
+
   /* SCROLL */
-  .scroll-area { flex: 1; overflow-y: auto; scrollbar-width: none; }
-  .scroll-area::-webkit-scrollbar { display: none; }
+  .scroll-area { flex:1; overflow-y:auto; scrollbar-width:none; }
+  .scroll-area::-webkit-scrollbar { display:none; }
 
   /* SECTION HEADER */
-  .section-header { padding: 20px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; }
-  .section-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; }
-  .section-count { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--anchor-dim); }
+  .section-header { padding:18px 20px 10px; display:flex; justify-content:space-between; align-items:baseline; }
+  .section-title { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; }
+  .section-count { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--anchor-dim); }
 
   /* GENRE PILLS */
-  .genre-scroll { padding: 0 16px 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-  .genre-scroll::-webkit-scrollbar { display: none; }
-  .genre-pill {
-    flex-shrink: 0;
-    padding: 8px 14px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    cursor: pointer;
-    background: var(--surface);
-    transition: all 0.15s;
-  }
-  .genre-pill.active { border-color: var(--anchor); color: var(--anchor); background: var(--anchor-glow); }
+  .genre-scroll { padding:0 16px 14px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+  .genre-scroll::-webkit-scrollbar { display:none; }
+  .genre-pill { flex-shrink:0; padding:7px 13px; border:1px solid var(--border); border-radius:2px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim); cursor:pointer; background:var(--surface); transition:all 0.15s; }
+  .genre-pill.active { border-color:var(--anchor); color:var(--anchor); background:var(--anchor-glow); }
 
   /* FILM FEATURED */
-  .film-featured {
-    margin: 0 16px 8px;
-    border-radius: 4px;
-    overflow: hidden;
-    background: var(--card);
-    border: 1px solid var(--border);
-    cursor: pointer;
-  }
-  .film-poster-area {
-    position: relative;
-    height: 220px;
-    overflow: hidden;
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .film-poster-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .film-poster-emoji { font-size: 60px; }
-  .film-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 140px; background: linear-gradient(transparent, var(--card)); }
-  .film-type-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    padding: 4px 10px;
-    border-radius: 2px;
-    text-transform: uppercase;
-    background: rgba(139,32,32,0.85);
-    color: #ffaaaa;
-    border: 1px solid rgba(139,32,32,0.5);
-  }
-  .film-body { padding: 16px 18px 18px; }
-  .film-meta { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-  .film-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 12px; }
-  .film-editorial { font-family: 'Crimson Pro', serif; font-size: 15px; line-height: 1.65; color: var(--text); margin-bottom: 16px; font-style: italic; }
-  .film-stats { display: flex; gap: 16px; margin-bottom: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-  .stat { display: flex; flex-direction: column; gap: 2px; }
-  .stat-value { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--anchor); }
-  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; }
-  .return-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-  .return-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--anchor); letter-spacing: 1px; }
-  .streaming-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-  .streamer-badge {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 10px; border-radius: 3px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 1px;
-    cursor: pointer; border: 1px solid transparent;
-  }
-  .streamer-sub { background: rgba(200,169,110,0.1); color: var(--anchor); border-color: rgba(200,169,110,0.2); }
-  .streamer-free { background: rgba(26,58,42,0.4); color: #88ddaa; border-color: rgba(136,221,170,0.2); }
-  .streamer-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-  .btn-return {
-    width: 100%; background: transparent; border: 1px solid var(--border);
-    color: var(--text-mid); padding: 12px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; cursor: pointer; border-radius: 2px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all 0.2s;
-  }
-  .btn-return.pressed { border-color: var(--anchor); color: var(--anchor); background: var(--anchor-glow); }
+  .film-featured { margin:0 16px 8px; border-radius:4px; overflow:hidden; background:var(--card); border:1px solid var(--border); cursor:pointer; }
+  .film-poster-area { position:relative; height:220px; overflow:hidden; background:var(--surface); display:flex; align-items:center; justify-content:center; }
+  .film-poster-img { width:100%; height:100%; object-fit:cover; display:block; }
+  .film-gradient { position:absolute; bottom:0; left:0; right:0; height:140px; background:linear-gradient(transparent, var(--card)); }
+  .film-type-badge { position:absolute; top:12px; left:12px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; padding:4px 10px; border-radius:2px; text-transform:uppercase; background:rgba(139,32,32,0.85); color:#ffaaaa; border:1px solid rgba(139,32,32,0.5); }
+  .film-body { padding:14px 16px 16px; }
+  .film-meta { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px; }
+  .film-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--white); line-height:1.2; margin-bottom:10px; }
+  .film-editorial { font-family:'Crimson Pro',serif; font-size:15px; line-height:1.65; color:var(--text); margin-bottom:14px; font-style:italic; }
+  .film-stats { display:flex; gap:16px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+  .stat { display:flex; flex-direction:column; gap:2px; }
+  .stat-value { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--anchor); }
+  .stat-label { font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; }
+  .return-indicator { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .return-text { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--anchor); letter-spacing:1px; }
+  .streaming-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .streamer-badge { display:flex; align-items:center; gap:6px; padding:5px 9px; border-radius:3px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1px; cursor:pointer; border:1px solid transparent; }
+  .streamer-sub { background:rgba(200,169,110,0.1); color:var(--anchor); border-color:rgba(200,169,110,0.2); }
+  .streamer-free { background:rgba(26,58,42,0.4); color:#88ddaa; border-color:rgba(136,221,170,0.2); }
+  .streamer-dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .btn-return { width:100%; background:transparent; border:1px solid var(--border); color:var(--text-mid); padding:11px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; border-radius:2px; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; }
+  .btn-return.pressed { border-color:var(--anchor); color:var(--anchor); background:var(--anchor-glow); }
 
   /* COMPACT CARD */
-  .film-compact {
-    margin: 0 16px 1px; padding: 14px 16px;
-    background: var(--card); border: 1px solid var(--border);
-    display: flex; gap: 14px; cursor: pointer; border-radius: 2px;
-  }
-  .compact-poster {
-    width: 52px; height: 76px;
-    background: var(--surface); border-radius: 2px;
-    flex-shrink: 0; overflow: hidden;
-    border: 1px solid var(--border);
-  }
-  .compact-poster img { width: 100%; height: 100%; object-fit: cover; }
-  .compact-poster-emoji { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
-  .compact-body { flex: 1; min-width: 0; }
-  .compact-type { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-  .compact-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .compact-meta { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); margin-bottom: 6px; }
-  .compact-streamers { display: flex; gap: 4px; flex-wrap: wrap; }
-  .compact-streamer { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--anchor-dim); background: rgba(200,169,110,0.08); padding: 2px 6px; border-radius: 2px; }
-  .compact-return { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--text-dim); }
+  .film-compact { margin:0 16px 1px; padding:12px 14px; background:var(--card); border:1px solid var(--border); display:flex; gap:12px; cursor:pointer; border-radius:2px; }
+  .compact-poster { width:48px; height:70px; background:var(--surface); border-radius:2px; flex-shrink:0; overflow:hidden; border:1px solid var(--border); }
+  .compact-poster img { width:100%; height:100%; object-fit:cover; }
+  .compact-poster-emoji { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:24px; }
+  .compact-body { flex:1; min-width:0; }
+  .compact-type { font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:3px; }
+  .compact-title { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--white); margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .compact-meta { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); margin-bottom:5px; }
+  .compact-streamers { display:flex; gap:4px; flex-wrap:wrap; }
+  .compact-streamer { font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--anchor-dim); background:rgba(200,169,110,0.08); padding:2px 6px; border-radius:2px; }
+  .compact-return { font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--text-dim); }
+
+  /* LOAD MORE */
+  .load-more-btn { margin:12px 16px; padding:12px; border:1px solid var(--border); border-radius:2px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--anchor-dim); background:transparent; cursor:pointer; width:calc(100% - 32px); text-align:center; transition:all 0.2s; }
+  .load-more-btn:hover { border-color:var(--anchor); color:var(--anchor); }
 
   /* FREEMIUM */
-  .freemium-banner {
-    margin: 8px 16px 16px; padding: 14px 16px;
-    background: linear-gradient(135deg, rgba(200,169,110,0.06), rgba(200,169,110,0.02));
-    border: 1px solid rgba(200,169,110,0.2); border-radius: 3px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .banner-text { font-family: 'Crimson Pro', serif; font-size: 13px; color: var(--text-mid); font-style: italic; }
-  .banner-cta { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--anchor); letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-bottom: 1px solid var(--anchor-dim); }
+  .freemium-banner { margin:8px 16px 16px; padding:14px 16px; background:linear-gradient(135deg,rgba(200,169,110,0.06),rgba(200,169,110,0.02)); border:1px solid rgba(200,169,110,0.2); border-radius:3px; display:flex; justify-content:space-between; align-items:center; }
+  .banner-text { font-family:'Crimson Pro',serif; font-size:13px; color:var(--text-mid); font-style:italic; }
+  .banner-cta { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--anchor); letter-spacing:2px; text-transform:uppercase; cursor:pointer; border-bottom:1px solid var(--anchor-dim); }
 
   /* BOTTOM NAV */
-  .bottom-nav { padding: 10px 0 24px; display: flex; justify-content: space-around; border-top: 1px solid var(--border); background: var(--black); }
-  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 16px; }
-  .nav-icon { font-size: 20px; filter: grayscale(1); opacity: 0.4; transition: all 0.15s; }
-  .nav-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; }
-  .nav-item.active .nav-icon { filter: none; opacity: 1; }
-  .nav-item.active .nav-label { color: var(--anchor); }
+  .bottom-nav { padding:10px 0 24px; display:flex; justify-content:space-around; border-top:1px solid var(--border); background:var(--black); }
+  .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:4px 12px; }
+  .nav-icon { font-size:20px; filter:grayscale(1); opacity:0.4; transition:all 0.15s; }
+  .nav-label { font-family:'IBM Plex Mono',monospace; font-size:8px; letter-spacing:1.5px; color:var(--text-dim); text-transform:uppercase; }
+  .nav-item.active .nav-icon { filter:none; opacity:1; }
+  .nav-item.active .nav-label { color:var(--anchor); }
 
   /* LOADING */
-  .loading { text-align: center; padding: 40px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
-
-  .section-divider { margin: 8px 16px; height: 1px; background: var(--border); opacity: 0.5; }
+  .loading { text-align:center; padding:40px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:2px; line-height:2; }
+  .section-divider { margin:6px 16px; height:1px; background:var(--border); opacity:0.5; }
 
   /* DETAIL */
-  .detail-header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
-  .back-btn { font-size: 20px; cursor: pointer; color: var(--anchor); }
-  .nav-screen-title { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--white); font-weight: 700; }
-  .detail-poster-full { width: 100%; height: 260px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 90px; position: relative; overflow: hidden; }
-  .detail-poster-full img { width: 100%; height: 100%; object-fit: cover; }
-  .detail-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 160px; background: linear-gradient(transparent, var(--black)); }
-  .detail-body { padding: 20px 20px 100px; }
-  .detail-genre { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
-  .detail-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 16px; }
-  .detail-scores { display: flex; margin-bottom: 20px; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
-  .score-block { flex: 1; padding: 12px 8px; text-align: center; border-right: 1px solid var(--border); }
-  .score-block:last-child { border-right: none; }
-  .score-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--anchor); display: block; }
-  .score-src { font-family: 'IBM Plex Mono', monospace; font-size: 7px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; }
-  .editorial-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--anchor-dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .editorial-label::after { content:''; flex:1; height:1px; background: var(--border); }
-  .detail-editorial { font-family: 'Crimson Pro', serif; font-size: 17px; line-height: 1.7; color: var(--text); font-style: italic; margin-bottom: 24px; }
-  .return-section { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 16px; margin-bottom: 20px; text-align: center; }
-  .return-big-num { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--anchor); display: block; line-height: 1; margin-bottom: 4px; }
-  .return-big-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; display: block; }
-  .streaming-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
-  .streamer-row-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 14px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 3px;
-    cursor: pointer; margin-bottom: 8px;
-  }
-  .streamer-name-row { display: flex; align-items: center; gap: 10px; }
-  .streamer-name-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--white); }
-  .streamer-type-text { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--text-dim); text-transform: uppercase; }
-  .streamer-arrow { color: var(--anchor); font-size: 16px; }
+  .detail-header { padding:14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+  .back-btn { font-size:20px; cursor:pointer; color:var(--anchor); }
+  .nav-screen-title { font-family:'Playfair Display',serif; font-size:16px; color:var(--white); font-weight:700; }
+  .detail-poster-full { width:100%; height:260px; background:var(--surface); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:80px; }
+  .detail-poster-full img { width:100%; height:100%; object-fit:cover; }
+  .detail-overlay { position:absolute; bottom:0; left:0; right:0; height:160px; background:linear-gradient(transparent,var(--black)); }
+  .detail-body { padding:18px 20px 100px; }
+  .detail-genre { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; margin-bottom:7px; }
+  .detail-title { font-family:'Playfair Display',serif; font-size:28px; font-weight:900; color:var(--white); line-height:1.1; margin-bottom:14px; }
+  .detail-scores { display:flex; margin-bottom:18px; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
+  .score-block { flex:1; padding:11px 8px; text-align:center; border-right:1px solid var(--border); }
+  .score-block:last-child { border-right:none; }
+  .score-num { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--anchor); display:block; }
+  .score-src { font-family:'IBM Plex Mono',monospace; font-size:7px; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; }
+  .editorial-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--anchor-dim); letter-spacing:3px; text-transform:uppercase; margin-bottom:11px; display:flex; align-items:center; gap:8px; }
+  .editorial-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .detail-editorial { font-family:'Crimson Pro',serif; font-size:17px; line-height:1.7; color:var(--text); font-style:italic; margin-bottom:22px; }
+  .return-section { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:18px; text-align:center; }
+  .return-big-num { font-family:'Playfair Display',serif; font-size:42px; font-weight:900; color:var(--anchor); display:block; line-height:1; margin-bottom:4px; }
+  .return-big-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; display:block; }
+  .streaming-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; }
+  .streamer-row-item { display:flex; align-items:center; justify-content:space-between; padding:11px 13px; background:var(--surface); border:1px solid var(--border); border-radius:3px; cursor:pointer; margin-bottom:7px; }
+  .streamer-name-text { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--white); }
+  .streamer-type-text { font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--text-dim); text-transform:uppercase; }
+  .streamer-arrow { color:var(--anchor); font-size:16px; }
+
+  /* PIN MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:200; display:none; align-items:center; justify-content:center; }
+  .modal-overlay.active { display:flex; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:32px 28px; width:280px; text-align:center; }
+  .modal-title { font-family:'Playfair Display',serif; font-size:20px; color:var(--white); margin-bottom:6px; }
+  .modal-sub { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:24px; }
+  .pin-dots { display:flex; justify-content:center; gap:12px; margin-bottom:28px; }
+  .pin-dot { width:14px; height:14px; border-radius:50%; border:2px solid var(--border); transition:all 0.15s; }
+  .pin-dot.filled { background:var(--anchor); border-color:var(--anchor); }
+  .pin-keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+  .pin-key { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:14px; font-family:'Playfair Display',serif; font-size:20px; color:var(--white); cursor:pointer; transition:all 0.15s; }
+  .pin-key:active { background:var(--anchor-glow); border-color:var(--anchor); }
+  .pin-cancel { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:2px; cursor:pointer; text-transform:uppercase; margin-top:8px; display:block; }
+  .pin-error { font-family:'IBM Plex Mono',monospace; font-size:9px; color:#ff6666; letter-spacing:2px; margin-top:8px; display:none; }
+
+  /* ADMIN PANEL */
+  .admin-header { padding:14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); background:rgba(139,32,32,0.1); }
+  .admin-badge { font-family:'IBM Plex Mono',monospace; font-size:9px; color:#ffaaaa; letter-spacing:2px; background:rgba(139,32,32,0.3); padding:3px 8px; border-radius:2px; border:1px solid rgba(139,32,32,0.5); }
+  .eval-card { margin:0 16px 8px; background:var(--card); border:1px solid var(--border); border-radius:3px; overflow:hidden; }
+  .eval-poster { height:140px; background:var(--surface); overflow:hidden; position:relative; }
+  .eval-poster img { width:100%; height:100%; object-fit:cover; filter:brightness(0.7); }
+  .eval-body { padding:14px 16px; }
+  .eval-title { font-family:'Playfair Display',serif; font-size:18px; color:var(--white); margin-bottom:4px; }
+  .eval-meta { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:12px; }
+  .eval-synopsis { font-family:'Crimson Pro',serif; font-size:14px; color:var(--text); font-style:italic; line-height:1.6; margin-bottom:14px; }
+  .eval-actions { display:flex; gap:8px; }
+  .eval-btn { flex:1; padding:10px; border-radius:2px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; border:1px solid; transition:all 0.2s; text-align:center; }
+  .eval-approve { background:rgba(26,58,42,0.4); color:#88ddaa; border-color:rgba(136,221,170,0.3); }
+  .eval-reject { background:rgba(139,32,32,0.2); color:#ffaaaa; border-color:rgba(139,32,32,0.3); }
+  .eval-hold { background:rgba(200,169,110,0.08); color:var(--anchor-dim); border-color:rgba(200,169,110,0.2); }
+  .eval-note { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:2px; padding:8px 10px; color:var(--text); font-family:'Crimson Pro',serif; font-size:13px; margin-bottom:8px; resize:none; outline:none; height:60px; }
+  .admin-stats { display:flex; gap:0; margin:8px 16px 0; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
+  .admin-stat { flex:1; padding:12px 8px; text-align:center; border-right:1px solid var(--border); }
+  .admin-stat:last-child { border-right:none; }
+  .admin-stat-num { font-family:'Playfair Display',serif; font-size:20px; color:var(--anchor); font-weight:700; display:block; }
+  .admin-stat-label { font-family:'IBM Plex Mono',monospace; font-size:7px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
+  .add-film-section { margin:12px 16px; }
+  .add-film-input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:2px; padding:10px 12px; color:var(--white); font-family:'IBM Plex Mono',monospace; font-size:11px; outline:none; margin-bottom:8px; }
+  .add-film-btn { width:100%; background:var(--anchor-glow); border:1px solid var(--anchor-dim); border-radius:2px; padding:10px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--anchor); cursor:pointer; }
+  .search-result-item { padding:10px 14px; border-bottom:1px solid var(--border); cursor:pointer; display:flex; gap:10px; align-items:center; }
+  .search-result-item:hover { background:var(--surface); }
+  .search-result-poster { width:36px; height:52px; background:var(--surface); border-radius:2px; overflow:hidden; flex-shrink:0; }
+  .search-result-poster img { width:100%; height:100%; object-fit:cover; }
+  .search-result-title { font-family:'Playfair Display',serif; font-size:14px; color:var(--white); margin-bottom:2px; }
+  .search-result-meta { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--text-dim); }
 </style>
 </head>
 <body>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal-box">
+    <div class="modal-title">⚓ Editor</div>
+    <div class="modal-sub">Zona editorial privada</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+    <div class="pin-keypad">
+      <div class="pin-key" onclick="pinKey('1')">1</div>
+      <div class="pin-key" onclick="pinKey('2')">2</div>
+      <div class="pin-key" onclick="pinKey('3')">3</div>
+      <div class="pin-key" onclick="pinKey('4')">4</div>
+      <div class="pin-key" onclick="pinKey('5')">5</div>
+      <div class="pin-key" onclick="pinKey('6')">6</div>
+      <div class="pin-key" onclick="pinKey('7')">7</div>
+      <div class="pin-key" onclick="pinKey('8')">8</div>
+      <div class="pin-key" onclick="pinKey('9')">9</div>
+      <div class="pin-key" onclick="pinClear()" style="font-size:14px;color:var(--text-dim)">⌫</div>
+      <div class="pin-key" onclick="pinKey('0')">0</div>
+      <div class="pin-key" onclick="pinCancel()" style="font-size:12px;color:var(--text-dim)">✕</div>
+    </div>
+    <div class="pin-error" id="pin-error">PIN incorrecto</div>
+  </div>
+</div>
 
 <!-- SPLASH -->
 <div class="screen active" id="screen-splash">
@@ -310,18 +257,27 @@
 <!-- HOME -->
 <div class="screen" id="screen-home">
   <div class="header">
-    <div class="header-logo">ANCLA</div>
+    <div class="header-logo" onclick="logoTap()">ANCLA</div>
     <div class="header-country">
       <div class="country-dot"></div>
-      <span id="country-label">Detectando...</span>
+      <span id="country-label">CO</span>
     </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-input" placeholder="Buscar título..." oninput="onSearch(this.value)">
+    </div>
+    <div class="search-results" id="search-results"></div>
   </div>
 
   <div class="scroll-area">
     <div class="section-header">
       <span class="section-title">Géneros</span>
     </div>
-    <div class="genre-scroll" id="genre-pills">
+    <div class="genre-scroll">
       <div class="genre-pill active" data-genre="">Todos</div>
       <div class="genre-pill" data-genre="accion_con_peso">Acción con Peso</div>
       <div class="genre-pill" data-genre="terror_psicologico">Terror Psicológico</div>
@@ -331,10 +287,11 @@
       <div class="genre-pill" data-genre="franquicia_con_alma">Franquicia con Alma</div>
       <div class="genre-pill" data-genre="fantasia_con_gravedad">Fantasía</div>
       <div class="genre-pill" data-genre="peak_tv">Peak TV</div>
+      <div class="genre-pill" data-genre="ancla_cultural">Anclas</div>
     </div>
 
     <div class="section-header">
-      <span class="section-title" id="today-label">Hoy · Cargando...</span>
+      <span class="section-title" id="today-label">Hoy</span>
       <span class="section-count">Gratuito</span>
     </div>
 
@@ -349,19 +306,19 @@
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('home')">
+    <div class="nav-item active" id="nav-hoy" onclick="navTo('hoy')">
       <div class="nav-icon">⚓</div>
       <div class="nav-label">Hoy</div>
     </div>
-    <div class="nav-item" onclick="switchTab('catalog')">
+    <div class="nav-item" id="nav-catalogo" onclick="navTo('catalogo')">
       <div class="nav-icon">🎬</div>
       <div class="nav-label">Catálogo</div>
     </div>
-    <div class="nav-item" onclick="switchTab('returns')">
+    <div class="nav-item" id="nav-regresos" onclick="navTo('regresos')">
       <div class="nav-icon">↩</div>
       <div class="nav-label">Mis Regresos</div>
     </div>
-    <div class="nav-item" onclick="switchTab('gems')">
+    <div class="nav-item" id="nav-joyas" onclick="navTo('joyas')">
       <div class="nav-icon">💎</div>
       <div class="nav-label">Joyas</div>
     </div>
@@ -371,41 +328,109 @@
 <!-- DETAIL -->
 <div class="screen" id="screen-detail">
   <div class="detail-header">
-    <div class="back-btn" onclick="goTo('screen-home')">←</div>
+    <div class="back-btn" onclick="goBack()">←</div>
     <div class="nav-screen-title">Ficha</div>
   </div>
   <div class="scroll-area">
-    <div id="detail-content">
-      <div class="loading">Cargando...</div>
-    </div>
+    <div id="detail-content"><div class="loading">Cargando...</div></div>
   </div>
 </div>
 
 <!-- CATALOG -->
 <div class="screen" id="screen-catalog">
   <div class="header">
-    <div class="back-btn" onclick="goTo('screen-home')">←</div>
-    <div class="nav-screen-title">Catálogo</div>
+    <div class="header-logo">ANCLA</div>
     <div class="header-country"><div class="country-dot"></div><span id="country-label-cat">CO</span></div>
+  </div>
+  <div class="search-bar">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-cat" placeholder="Buscar en catálogo..." oninput="onSearchCat(this.value)">
+    </div>
+    <div class="search-results" id="search-results-cat"></div>
   </div>
   <div class="scroll-area">
     <div class="section-header">
       <span class="section-title">Mayor Índice de Regreso</span>
       <span class="section-count" id="catalog-count"></span>
     </div>
-    <div id="catalog-films">
-      <div class="loading">⚓ Cargando...</div>
+    <div class="genre-scroll" id="genre-cat">
+      <div class="genre-pill active" data-genre="">Todos</div>
+      <div class="genre-pill" data-genre="accion_con_peso">Acción</div>
+      <div class="genre-pill" data-genre="terror_psicologico">Terror</div>
+      <div class="genre-pill" data-genre="scifi_de_ideas">SciFi</div>
+      <div class="genre-pill" data-genre="noir_y_crimen">Noir</div>
+      <div class="genre-pill" data-genre="micro_sorpresas">Sorpresas</div>
+      <div class="genre-pill" data-genre="franquicia_con_alma">Franquicia</div>
+      <div class="genre-pill" data-genre="peak_tv">TV</div>
+    </div>
+    <div id="catalog-films"><div class="loading">⚓ Cargando...</div></div>
+    <button class="load-more-btn" id="load-more-btn" onclick="loadMoreCatalog()" style="display:none">
+      + Cargar más títulos
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="screen-admin">
+  <div class="admin-header">
+    <div class="back-btn" onclick="goBack()">←</div>
+    <div class="nav-screen-title">Editor</div>
+    <div class="admin-badge">PRIVADO</div>
+  </div>
+  <div class="scroll-area">
+    <!-- Stats -->
+    <div class="admin-stats" id="admin-stats">
+      <div class="admin-stat"><span class="admin-stat-num" id="stat-total">—</span><span class="admin-stat-label">Catálogo</span></div>
+      <div class="admin-stat"><span class="admin-stat-num" id="stat-curated">—</span><span class="admin-stat-label">Curados</span></div>
+      <div class="admin-stat"><span class="admin-stat-num" id="stat-returns">—</span><span class="admin-stat-label">Regresos</span></div>
+      <div class="admin-stat"><span class="admin-stat-num" id="stat-pending">—</span><span class="admin-stat-label">Pendientes</span></div>
+    </div>
+
+    <!-- Agregar título a evaluación -->
+    <div class="section-header" style="margin-top:12px">
+      <span class="section-title">Agregar a Evaluación</span>
+    </div>
+    <div class="add-film-section">
+      <input class="add-film-input" id="admin-search-input" placeholder="Buscar película o serie..." oninput="adminSearch(this.value)">
+      <div id="admin-search-results"></div>
+    </div>
+
+    <!-- Cola de evaluación -->
+    <div class="section-header">
+      <span class="section-title">En Evaluación</span>
+      <span class="section-count" id="eval-count">0</span>
+    </div>
+    <div id="eval-queue">
+      <div class="loading">Sin títulos en evaluación</div>
+    </div>
+
+    <!-- Top regresos -->
+    <div class="section-header" style="margin-top:8px">
+      <span class="section-title">Top Regresos de la Tribu</span>
+    </div>
+    <div id="admin-top-returns">
+      <div class="loading">Cargando...</div>
     </div>
   </div>
 </div>
 
 <script>
 const API = 'https://ancla-backend.onrender.com'
+const PIN = '1979'  // Tu año — cámbialo cuando quieras
 let COUNTRY = 'CO'
-let currentFilm = null
 let myReturns = JSON.parse(localStorage.getItem('ancla_returns') || '[]')
+let evalQueue = JSON.parse(localStorage.getItem('ancla_eval') || '[]')
+let prevScreen = 'screen-home'
+let catalogOffset = 0
+let catalogGenre = ''
+let catalogTotal = 0
+let pinEntry = ''
+let logoTapCount = 0
+let logoTapTimer = null
+let searchTimer = null
 
-// ── BOOT ──────────────────────────────────
+// ── BOOT ─────────────────────────────────
 async function enterApp() {
   goTo('screen-home')
   await detectCountry()
@@ -417,131 +442,370 @@ async function detectCountry() {
     const r = await fetch('https://ipapi.co/json/')
     const d = await r.json()
     COUNTRY = d.country_code || 'CO'
-    const label = `${d.country_name || 'Colombia'} · ${COUNTRY}`
-    document.getElementById('country-label').textContent = label
+    document.getElementById('country-label').textContent = `${d.country_name||'Colombia'} · ${COUNTRY}`
     document.getElementById('country-label-cat').textContent = COUNTRY
-  } catch(e) {
-    document.getElementById('country-label').textContent = 'Colombia · CO'
+  } catch(e) {}
+}
+
+// ── LOGO TAP → ADMIN ─────────────────────
+function logoTap() {
+  logoTapCount++
+  clearTimeout(logoTapTimer)
+  if (logoTapCount >= 5) {
+    logoTapCount = 0
+    showPinModal()
+  } else {
+    logoTapTimer = setTimeout(() => logoTapCount = 0, 2000)
   }
+}
+
+// ── PIN ───────────────────────────────────
+function showPinModal() {
+  pinEntry = ''
+  updatePinDots()
+  document.getElementById('pin-error').style.display = 'none'
+  document.getElementById('pin-modal').classList.add('active')
+}
+
+function pinKey(n) {
+  if (pinEntry.length >= 4) return
+  pinEntry += n
+  updatePinDots()
+  if (pinEntry.length === 4) {
+    setTimeout(() => {
+      if (pinEntry === PIN) {
+        document.getElementById('pin-modal').classList.remove('active')
+        pinEntry = ''
+        updatePinDots()
+        openAdmin()
+      } else {
+        document.getElementById('pin-error').style.display = 'block'
+        setTimeout(() => { pinEntry = ''; updatePinDots(); document.getElementById('pin-error').style.display = 'none' }, 1000)
+      }
+    }, 200)
+  }
+}
+
+function pinClear() { if(pinEntry.length) { pinEntry = pinEntry.slice(0,-1); updatePinDots() } }
+function pinCancel() { pinEntry=''; updatePinDots(); document.getElementById('pin-modal').classList.remove('active') }
+
+function updatePinDots() {
+  for(let i=0;i<4;i++) {
+    const dot = document.getElementById(`dot-${i}`)
+    if(dot) dot.classList.toggle('filled', i < pinEntry.length)
+  }
+}
+
+// ── ADMIN ─────────────────────────────────
+async function openAdmin() {
+  prevScreen = 'screen-home'
+  goTo('screen-admin')
+  await loadAdminStats()
+  await loadEvalQueue()
+  await loadTopReturns()
+}
+
+async function loadAdminStats() {
+  try {
+    const r = await fetch(`${API}/stats`)
+    const d = await r.json()
+    document.getElementById('stat-total').textContent = d.total_titles || '—'
+    document.getElementById('stat-curated').textContent = d.with_editorial || '—'
+    document.getElementById('stat-returns').textContent = ((d.total_returns||0)/1000).toFixed(1)+'k'
+    document.getElementById('stat-pending').textContent = evalQueue.length
+  } catch(e) {}
+}
+
+async function loadTopReturns() {
+  try {
+    const r = await fetch(`${API}/films/top?limit=5`)
+    const d = await r.json()
+    document.getElementById('admin-top-returns').innerHTML = d.films.map(f => `
+      <div class="film-compact" onclick="showDetail(${f.tmdb_id})">
+        <div class="compact-poster">
+          ${f.poster_url?`<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`:`<div class="compact-poster-emoji">🎬</div>`}
+        </div>
+        <div class="compact-body">
+          <div class="compact-title">${f.title}</div>
+          <div class="compact-meta">${f.year||''} · ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="compact-return">↩ ${(f.return_count||0).toLocaleString()}</div>
+        </div>
+      </div>`).join('')
+  } catch(e) {}
+}
+
+function loadEvalQueue() {
+  document.getElementById('eval-count').textContent = evalQueue.length
+  document.getElementById('stat-pending').textContent = evalQueue.length
+  if (!evalQueue.length) {
+    document.getElementById('eval-queue').innerHTML = '<div class="loading">Sin títulos en evaluación.<br>Busca arriba para agregar.</div>'
+    return
+  }
+  document.getElementById('eval-queue').innerHTML = evalQueue.map((film,i) => `
+    <div class="eval-card" id="eval-${film.tmdb_id}">
+      <div class="eval-poster">
+        ${film.poster_url?`<img src="${film.poster_url}" alt="${film.title}" loading="lazy">`:''}
+      </div>
+      <div class="eval-body">
+        <div class="eval-title">${film.title}</div>
+        <div class="eval-meta">${film.year||''} · IMDb ${film.vote_average?.toFixed(1)||'—'}</div>
+        <div class="eval-synopsis">${film.overview||'Sin sinopsis disponible.'}</div>
+        <textarea class="eval-note" id="note-${film.tmdb_id}" placeholder="Nota editorial (por qué entra o sale)..."></textarea>
+        <div class="eval-actions">
+          <div class="eval-btn eval-approve" onclick="evalAction(${film.tmdb_id},'approve')">✓ Aprobada</div>
+          <div class="eval-btn eval-hold" onclick="evalAction(${film.tmdb_id},'hold')">⏸ Esperar</div>
+          <div class="eval-btn eval-reject" onclick="evalAction(${film.tmdb_id},'reject')">✗ Rechazar</div>
+        </div>
+      </div>
+    </div>`).join('')
+}
+
+function evalAction(tmdbId, action) {
+  const note = document.getElementById(`note-${tmdbId}`)?.value || ''
+  const film = evalQueue.find(f => f.tmdb_id === tmdbId)
+  if (!film) return
+
+  evalQueue = evalQueue.filter(f => f.tmdb_id !== tmdbId)
+
+  if (action === 'approve') {
+    let approved = JSON.parse(localStorage.getItem('ancla_approved') || '[]')
+    approved.push({...film, note, approved_at: new Date().toISOString()})
+    localStorage.setItem('ancla_approved', JSON.stringify(approved))
+  } else if (action === 'reject') {
+    let rejected = JSON.parse(localStorage.getItem('ancla_rejected') || '[]')
+    rejected.push({...film, note, rejected_at: new Date().toISOString()})
+    localStorage.setItem('ancla_rejected', JSON.stringify(rejected))
+  }
+
+  localStorage.setItem('ancla_eval', JSON.stringify(evalQueue))
+  document.getElementById(`eval-${tmdbId}`)?.remove()
+  document.getElementById('eval-count').textContent = evalQueue.length
+  document.getElementById('stat-pending').textContent = evalQueue.length
+
+  if (!evalQueue.length) {
+    document.getElementById('eval-queue').innerHTML = '<div class="loading">Sin títulos en evaluación.</div>'
+  }
+}
+
+async function adminSearch(q) {
+  clearTimeout(searchTimer)
+  const container = document.getElementById('admin-search-results')
+  if (!q || q.length < 2) { container.innerHTML = ''; return }
+  searchTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(q)}&language=es-ES&api_key=DEMO`)
+      // Sin key real usamos el backend
+      const r2 = await fetch(`${API}/films?limit=5`)
+      const d = await r2.json()
+      const filtered = d.films.filter(f => f.title.toLowerCase().includes(q.toLowerCase()))
+      container.innerHTML = filtered.map(f => `
+        <div class="search-result-item" onclick="addToEval(${JSON.stringify(f).replace(/"/g,'&quot;')})">
+          <div class="search-result-poster">
+            ${f.poster_url?`<img src="${f.poster_url}" loading="lazy">`:''}
+          </div>
+          <div>
+            <div class="search-result-title">${f.title}</div>
+            <div class="search-result-meta">${f.year||''} · IMDb ${f.scores?.imdb?.toFixed(1)||'—'}</div>
+          </div>
+        </div>`).join('') || '<div class="loading" style="padding:12px">Sin resultados en el catálogo actual</div>'
+    } catch(e) {}
+  }, 400)
+}
+
+function addToEval(film) {
+  if (evalQueue.find(f => f.tmdb_id === film.tmdb_id)) return
+  const evalFilm = {
+    tmdb_id: film.tmdb_id,
+    title: film.title,
+    year: film.year,
+    poster_url: film.poster_url,
+    vote_average: film.scores?.imdb,
+    overview: film.synopsis_es
+  }
+  evalQueue.push(evalFilm)
+  localStorage.setItem('ancla_eval', JSON.stringify(evalQueue))
+  document.getElementById('admin-search-input').value = ''
+  document.getElementById('admin-search-results').innerHTML = ''
+  loadEvalQueue()
 }
 
 // ── TODAY ─────────────────────────────────
 async function loadToday(genre = '') {
   const container = document.getElementById('today-films')
   container.innerHTML = '<div class="loading">⚓ Cargando...</div>'
-
   try {
-    let url = genre
-      ? `${API}/films?country=${COUNTRY}&type=gravitacional&genre=${genre}&limit=10`
+    const url = genre
+      ? `${API}/films?country=${COUNTRY}&ancla_genre=${genre}&limit=10&sort=return_count`
       : `${API}/films/today?country=${COUNTRY}`
-
     const r = await fetch(url)
     const data = await r.json()
     const films = data.films || []
+    document.getElementById('today-label').textContent = genre
+      ? `${genre.replace(/_/g,' ')} · ${films.length} títulos`
+      : `Hoy · ${films.length} recomendadas`
+    if (!films.length) { container.innerHTML = '<div class="loading">Sin títulos disponibles</div>'; return }
+    renderHomeFilms(films, container)
+  } catch(e) {
+    container.innerHTML = '<div class="loading">Error conectando.<br>Intenta de nuevo.</div>'
+  }
+}
 
-    document.getElementById('today-label').textContent =
-      genre ? `Género · ${films.length} títulos` : `Hoy · ${films.length} de ${films.length}`
-
-    if (!films.length) {
-      container.innerHTML = '<div class="loading">Sin títulos disponibles</div>'
-      return
-    }
-
-    // Primer film = featured
-    const featured = films[0]
-    currentFilm = featured
-
-    let featuredHTML = `
-      <div class="film-featured" onclick="showDetail(${featured.tmdb_id})">
-        <div class="film-poster-area">
-          ${featured.poster_url
-            ? `<img class="film-poster-img" src="${featured.poster_url}" alt="${featured.title}" loading="lazy">`
-            : `<div class="film-poster-emoji">🎬</div>`}
-          <div class="film-gradient"></div>
-          <div class="film-type-badge">⚓ ${featured.ancla_type || 'Gravitacional'}</div>
+function renderHomeFilms(films, container) {
+  const featured = films[0]
+  let html = `
+    <div class="film-featured" onclick="showDetail(${featured.tmdb_id})">
+      <div class="film-poster-area">
+        ${featured.poster_url
+          ? `<img class="film-poster-img" src="${featured.poster_url}" alt="${featured.title}" loading="lazy">`
+          : `<span style="font-size:60px">🎬</span>`}
+        <div class="film-gradient"></div>
+        <div class="film-type-badge">⚓ ${featured.ancla_type||'Gravitacional'}</div>
+      </div>
+      <div class="film-body">
+        <div class="film-meta">${featured.era||''} · ${(featured.ancla_genre||'').replace(/_/g,' ')} · ${featured.year||''}</div>
+        <div class="film-title">${featured.title}</div>
+        <div class="film-stats">
+          <div class="stat"><div class="stat-value">${featured.scores?.imdb?.toFixed(1)||'—'}</div><div class="stat-label">IMDb</div></div>
+          <div class="stat"><div class="stat-value">${featured.scores?.metascore||'—'}</div><div class="stat-label">Metacritic</div></div>
+          <div class="stat"><div class="stat-value">${featured.year||'—'}</div><div class="stat-label">Año</div></div>
         </div>
-        <div class="film-body">
-          <div class="film-meta">${featured.era || ''} · ${(featured.ancla_genre||'').replace(/_/g,' ')} · ${featured.year||''}</div>
-          <div class="film-title">${featured.title}</div>
-          <div class="film-stats">
-            <div class="stat"><div class="stat-value">${featured.scores?.imdb?.toFixed(1)||'—'}</div><div class="stat-label">IMDb</div></div>
-            <div class="stat"><div class="stat-value">${featured.scores?.metascore||'—'}</div><div class="stat-label">Metacritic</div></div>
-            <div class="stat"><div class="stat-value">${featured.year||'—'}</div><div class="stat-label">Año</div></div>
-          </div>
-          <div class="return-indicator">
-            <span>↩</span>
-            <span class="return-text">${(featured.return_count||0).toLocaleString()} personas volvieron a verla</span>
-          </div>
-          <div class="streaming-row" id="stream-featured">
-            ${renderStreamers(featured.streaming || [])}
-          </div>
-          <button class="btn-return ${myReturns.includes(featured.tmdb_id)?'pressed':''}"
-            id="btn-feat-${featured.tmdb_id}"
-            onclick="toggleReturn(event,'btn-feat-${featured.tmdb_id}',${featured.tmdb_id})">
-            <span>↩</span> ${myReturns.includes(featured.tmdb_id)?'Volví · Registrado':'Volví a verla'}
-          </button>
+        <div class="return-indicator">
+          <span>↩</span>
+          <span class="return-text">${(featured.return_count||0).toLocaleString()} personas volvieron a verla</span>
+        </div>
+        <div class="streaming-row">${renderStreamers(featured.streaming||[])}</div>
+        <button class="btn-return ${myReturns.includes(featured.tmdb_id)?'pressed':''}"
+          id="btn-f-${featured.tmdb_id}"
+          onclick="toggleReturn(event,'btn-f-${featured.tmdb_id}',${featured.tmdb_id})">
+          <span>↩</span> ${myReturns.includes(featured.tmdb_id)?'Volví · Registrado':'Volví a verla'}
+        </button>
+      </div>
+    </div>
+    <div class="section-divider"></div>`
+
+  html += films.slice(1).map(f => compactCard(f)).join('')
+  container.innerHTML = html
+}
+
+function compactCard(f) {
+  return `
+    <div class="film-compact" onclick="showDetail(${f.tmdb_id})">
+      <div class="compact-poster">
+        ${f.poster_url?`<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`:`<div class="compact-poster-emoji">🎬</div>`}
+      </div>
+      <div class="compact-body">
+        <div class="compact-type">⚓ ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
+        <div class="compact-title">${f.title}</div>
+        <div class="compact-meta">${f.year||''} · ${f.era||''}</div>
+        <div class="compact-streamers">
+          ${(f.streaming||[]).filter(s=>s.type!=='unavailable').map(s=>`<span class="compact-streamer">${s.service}</span>`).join('')}
         </div>
       </div>
-      <div class="section-divider"></div>`
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;color:var(--anchor);font-weight:700">${f.scores?.imdb?.toFixed(1)||'—'}</div>
+        <div class="compact-return">↩ ${(f.return_count||0).toLocaleString()}</div>
+      </div>
+    </div>`
+}
 
-    // Resto como compact
-    let compactHTML = films.slice(1).map(f => `
-      <div class="film-compact" onclick="showDetail(${f.tmdb_id})">
-        <div class="compact-poster">
-          ${f.poster_url
-            ? `<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`
-            : `<div class="compact-poster-emoji">🎬</div>`}
-        </div>
-        <div class="compact-body">
-          <div class="compact-type">⚓ ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
-          <div class="compact-title">${f.title}</div>
-          <div class="compact-meta">${f.year||''} · ${f.era||''}</div>
-          <div class="compact-streamers">
-            ${(f.streaming||[]).filter(s=>s.type!=='unavailable').map(s=>
-              `<span class="compact-streamer">${s.service}</span>`).join('')}
+// ── SEARCH ────────────────────────────────
+async function onSearch(q) {
+  clearTimeout(searchTimer)
+  const results = document.getElementById('search-results')
+  if (!q || q.length < 2) { results.classList.remove('active'); results.innerHTML=''; return }
+  searchTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`${API}/films?limit=20`)
+      const d = await r.json()
+      const filtered = d.films.filter(f => f.title.toLowerCase().includes(q.toLowerCase())).slice(0,6)
+      if (!filtered.length) { results.innerHTML='<div class="loading" style="padding:10px;font-size:9px">Sin resultados</div>'; results.classList.add('active'); return }
+      results.innerHTML = filtered.map(f => `
+        <div class="search-result-item" onclick="showDetail(${f.tmdb_id});document.getElementById('search-input').value='';document.getElementById('search-results').classList.remove('active')">
+          <div class="search-result-poster">${f.poster_url?`<img src="${f.poster_url}" loading="lazy">`:''}</div>
+          <div>
+            <div class="search-result-title">${f.title}</div>
+            <div class="search-result-meta">${f.year||''} · ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
           </div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--anchor);font-weight:700;">
-            ${f.scores?.imdb?.toFixed(1)||'—'}
+        </div>`).join('')
+      results.classList.add('active')
+    } catch(e) {}
+  }, 300)
+}
+
+async function onSearchCat(q) {
+  clearTimeout(searchTimer)
+  const results = document.getElementById('search-results-cat')
+  if (!q || q.length < 2) { results.classList.remove('active'); results.innerHTML=''; return }
+  searchTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`${API}/films?limit=20`)
+      const d = await r.json()
+      const filtered = d.films.filter(f => f.title.toLowerCase().includes(q.toLowerCase())).slice(0,8)
+      results.innerHTML = filtered.map(f => `
+        <div class="search-result-item" onclick="showDetail(${f.tmdb_id});document.getElementById('search-cat').value='';document.getElementById('search-results-cat').classList.remove('active')">
+          <div class="search-result-poster">${f.poster_url?`<img src="${f.poster_url}" loading="lazy">`:''}</div>
+          <div>
+            <div class="search-result-title">${f.title}</div>
+            <div class="search-result-meta">${f.year||''}</div>
           </div>
-          <div class="compact-return">↩ ${((f.return_count||0)/1000).toFixed(1)}k</div>
-        </div>
-      </div>`).join('')
+        </div>`).join('')
+      results.classList.add('active')
+    } catch(e) {}
+  }, 300)
+}
 
-    container.innerHTML = featuredHTML + compactHTML
+// ── CATALOG ───────────────────────────────
+async function loadCatalog(genre='', reset=true) {
+  if (reset) { catalogOffset=0; catalogGenre=genre }
+  const container = document.getElementById('catalog-films')
+  if (reset) container.innerHTML = '<div class="loading">⚓ Cargando...</div>'
 
+  try {
+    const genreParam = catalogGenre ? `&ancla_genre=${catalogGenre}` : ''
+    const r = await fetch(`${API}/films?sort=return_count&limit=15&offset=${catalogOffset}${genreParam}&country=${COUNTRY}`)
+    const data = await r.json()
+    catalogTotal = data.total
+    document.getElementById('catalog-count').textContent = `${data.total} títulos`
+
+    const html = data.films.map(f => compactCard(f)).join('')
+    if (reset) container.innerHTML = html
+    else container.innerHTML += html
+
+    catalogOffset += data.films.length
+    const btn = document.getElementById('load-more-btn')
+    btn.style.display = catalogOffset < catalogTotal ? 'block' : 'none'
   } catch(e) {
-    container.innerHTML = `<div class="loading">Error conectando al servidor.<br>Intenta de nuevo.</div>`
+    if(reset) container.innerHTML = '<div class="loading">Error cargando catálogo.</div>'
   }
+}
+
+function loadMoreCatalog() {
+  loadCatalog(catalogGenre, false)
 }
 
 // ── DETAIL ────────────────────────────────
 async function showDetail(tmdbId) {
+  prevScreen = document.querySelector('.screen.active')?.id || 'screen-home'
   goTo('screen-detail')
   const container = document.getElementById('detail-content')
   container.innerHTML = '<div class="loading">Cargando ficha...</div>'
-
   try {
     const r = await fetch(`${API}/films/${tmdbId}`)
     const f = await r.json()
-
-    const streamRows = (f.streaming||[]).filter(s=>s.type!=='unavailable').map(s => `
-      <div class="streamer-row-item" onclick="${s.deeplink?`window.open('${s.deeplink}','_blank')`:''}">
-        <div class="streamer-name-row">
-          <div>
-            <div class="streamer-name-text">${s.service}</div>
-            <div class="streamer-type-text">${s.type==='free'?'Gratis · sin registro':'Suscripción incluida'}</div>
-          </div>
+    const streamRows = (f.streaming||[]).filter(s=>s.type!=='unavailable').map(s=>`
+      <div class="streamer-row-item">
+        <div>
+          <div class="streamer-name-text">${s.service}</div>
+          <div class="streamer-type-text">${s.type==='free'?'Gratis · sin registro':'Suscripción incluida'}</div>
         </div>
         <div class="streamer-arrow">→</div>
       </div>`).join('')
 
     container.innerHTML = `
       <div class="detail-poster-full">
-        ${f.poster_url
-          ? `<img src="${f.poster_url}" alt="${f.title}">`
-          : `<span style="font-size:80px">🎬</span>`}
+        ${f.poster_url?`<img src="${f.poster_url}" alt="${f.title}">`:`<span>🎬</span>`}
         <div class="detail-overlay"></div>
       </div>
       <div class="detail-body">
@@ -552,141 +816,115 @@ async function showDetail(tmdbId) {
           <div class="score-block"><span class="score-num">${f.scores?.metascore||'—'}</span><span class="score-src">Metacritic</span></div>
           <div class="score-block"><span class="score-num">${f.year||'—'}</span><span class="score-src">Año</span></div>
         </div>
-        ${f.editorial_text ? `
-          <div class="editorial-label">Criterio ANCLA</div>
-          <div class="detail-editorial">${f.editorial_text.replace(/\n\n/g,'<br><br>')}</div>
-        ` : f.synopsis_es ? `
-          <div class="editorial-label">Sinopsis</div>
-          <div class="detail-editorial">${f.synopsis_es}</div>
-        ` : ''}
+        ${f.editorial_text?`<div class="editorial-label">Criterio ANCLA</div><div class="detail-editorial">${f.editorial_text.replace(/\n\n/g,'<br><br>')}</div>`
+          :f.synopsis_es?`<div class="editorial-label">Sinopsis</div><div class="detail-editorial">${f.synopsis_es}</div>`:''}
         <div class="return-section">
           <span class="return-big-num">${(f.return_count||0).toLocaleString()}</span>
           <span class="return-big-label">Personas volvieron a verla</span>
           <button class="btn-return ${myReturns.includes(tmdbId)?'pressed':''}"
             id="btn-det-${tmdbId}"
             onclick="toggleReturn(event,'btn-det-${tmdbId}',${tmdbId})"
-            style="max-width:220px;margin:0 auto;">
+            style="max-width:220px;margin:0 auto">
             <span>↩</span> ${myReturns.includes(tmdbId)?'Volví · Registrado':'Volví a verla'}
           </button>
         </div>
-        ${streamRows ? `
-          <div class="streaming-label">Disponible en ${COUNTRY}</div>
-          ${streamRows}
-        ` : '<div class="loading" style="padding:20px">Sin disponibilidad en streaming para tu país</div>'}
+        ${streamRows?`<div class="streaming-label">Disponible en ${COUNTRY}</div>${streamRows}`:''}
       </div>`
   } catch(e) {
     container.innerHTML = '<div class="loading">Error cargando la ficha.</div>'
   }
 }
 
-// ── CATALOG ───────────────────────────────
-async function loadCatalog() {
-  const container = document.getElementById('catalog-films')
-  container.innerHTML = '<div class="loading">⚓ Cargando...</div>'
-  try {
-    const r = await fetch(`${API}/films?sort=return_count&limit=20&country=${COUNTRY}`)
-    const data = await r.json()
-    document.getElementById('catalog-count').textContent = `${data.total} títulos`
-    container.innerHTML = data.films.map(f => `
-      <div class="film-compact" onclick="showDetail(${f.tmdb_id});goTo('screen-detail')">
-        <div class="compact-poster">
-          ${f.poster_url
-            ? `<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`
-            : `<div class="compact-poster-emoji">🎬</div>`}
-        </div>
-        <div class="compact-body">
-          <div class="compact-type">⚓ ${(f.ancla_genre||'').replace(/_/g,' ')}</div>
-          <div class="compact-title">${f.title}</div>
-          <div class="compact-meta">${f.year||''} · ${f.era||''}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--anchor);font-weight:700;">${f.scores?.imdb?.toFixed(1)||'—'}</div>
-          <div class="compact-return">↩ ${(f.return_count||0).toLocaleString()}</div>
-        </div>
-      </div>`).join('')
-  } catch(e) {
-    container.innerHTML = '<div class="loading">Error cargando catálogo.</div>'
+// ── NAV ───────────────────────────────────
+function navTo(tab) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+  document.getElementById(`nav-${tab}`)?.classList.add('active')
+  if (tab==='hoy') { goTo('screen-home'); loadToday(currentGenre||'') }
+  else if (tab==='catalogo') { goTo('screen-catalog'); loadCatalog() }
+  else if (tab==='regresos') showReturns()
+  else if (tab==='joyas') showGems()
+}
+
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  document.getElementById(screenId)?.classList.add('active')
+  const scroll = document.querySelector('#'+screenId+' .scroll-area')
+  if (scroll) scroll.scrollTop = 0
+}
+
+function goBack() {
+  goTo(prevScreen || 'screen-home')
+}
+
+// ── RETURNS ───────────────────────────────
+async function showReturns() {
+  goTo('screen-home')
+  const container = document.getElementById('today-films')
+  document.getElementById('today-label').textContent = 'Mis Regresos'
+  if (!myReturns.length) {
+    container.innerHTML = '<div class="loading">Aún no marcaste ninguna película.<br>Toca "Volví a verla" en cualquier ficha.</div>'
+    return
   }
+  container.innerHTML = '<div class="loading">Cargando tus regresos...</div>'
+  try {
+    const films = await Promise.all(myReturns.map(id => fetch(`${API}/films/${id}`).then(r=>r.json()).catch(()=>null)))
+    container.innerHTML = films.filter(Boolean).map(f => compactCard(f)).join('')
+  } catch(e) {}
+}
+
+// ── GEMS ──────────────────────────────────
+function showGems() {
+  goTo('screen-home')
+  document.getElementById('today-label').textContent = 'Joyas de la Tribu'
+  document.getElementById('today-films').innerHTML =
+    '<div class="loading">💎 Joyas de la tribu<br><br>Próximamente — cuando la comunidad empiece a sugerir.<br><br>Si tienes una joya que debería estar en ANCLA — escríbenos.</div>'
 }
 
 // ── HELPERS ───────────────────────────────
 function renderStreamers(streaming) {
-  return streaming.filter(s=>s.type!=='unavailable').map(s =>
-    `<div class="streamer-badge ${s.type==='free'?'streamer-free':'streamer-sub'}">
+  const active = streaming.filter(s=>s.type!=='unavailable')
+  if (!active.length) return '<span style="font-family:monospace;font-size:9px;color:var(--text-dim)">Sin streaming disponible</span>'
+  return active.map(s=>`
+    <div class="streamer-badge ${s.type==='free'?'streamer-free':'streamer-sub'}">
       <div class="streamer-dot"></div>${s.service}${s.type==='free'?' · Gratis':''}
-    </div>`).join('') || '<span style="font-family:var(--IBM);font-size:9px;color:var(--text-dim)">Sin streaming disponible</span>'
+    </div>`).join('')
 }
 
 async function toggleReturn(e, btnId, tmdbId) {
   e.stopPropagation()
   const btn = document.getElementById(btnId)
   if (!btn) return
-  const already = myReturns.includes(tmdbId)
-  if (!already) {
+  if (!myReturns.includes(tmdbId)) {
     myReturns.push(tmdbId)
     btn.classList.add('pressed')
     btn.innerHTML = '<span>↩</span> Volví · Registrado'
-    try { await fetch(`${API}/films/${tmdbId}/return`, {method:'POST'}) } catch(e){}
+    try { await fetch(`${API}/films/${tmdbId}/return`, {method:'POST'}) } catch(e) {}
   } else {
-    myReturns = myReturns.filter(id => id !== tmdbId)
+    myReturns = myReturns.filter(id=>id!==tmdbId)
     btn.classList.remove('pressed')
     btn.innerHTML = '<span>↩</span> Volví a verla'
   }
   localStorage.setItem('ancla_returns', JSON.stringify(myReturns))
 }
 
-function goTo(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
-  document.getElementById(screenId).classList.add('active')
-  const scroll = document.querySelector('#'+screenId+' .scroll-area')
-  if (scroll) scroll.scrollTop = 0
-}
+let currentGenre = ''
 
-function switchTab(tab) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
-  event.currentTarget.classList.add('active')
-  if (tab === 'home') goTo('screen-home')
-  else if (tab === 'catalog') { goTo('screen-catalog'); loadCatalog() }
-  else if (tab === 'returns') showReturns()
-  else if (tab === 'gems') showGems()
-}
-
-function showReturns() {
-  goTo('screen-home')
-  const container = document.getElementById('today-films')
-  if (!myReturns.length) {
-    container.innerHTML = '<div class="loading">Aún no marcaste ninguna película.<br>Toca "Volví a verla" en cualquier ficha.</div>'
-    return
-  }
-  container.innerHTML = '<div class="loading">Cargando tus regresos...</div>'
-  Promise.all(myReturns.map(id => fetch(`${API}/films/${id}`).then(r=>r.json()).catch(()=>null)))
-    .then(films => {
-      container.innerHTML = films.filter(Boolean).map(f => `
-        <div class="film-compact" onclick="showDetail(${f.tmdb_id});goTo('screen-detail')">
-          <div class="compact-poster">
-            ${f.poster_url?`<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`:`<div class="compact-poster-emoji">🎬</div>`}
-          </div>
-          <div class="compact-body">
-            <div class="compact-type">↩ Volví a verla</div>
-            <div class="compact-title">${f.title}</div>
-            <div class="compact-meta">${f.year||''} · ${f.era||''}</div>
-          </div>
-        </div>`).join('')
-    })
-}
-
-function showGems() {
-  goTo('screen-home')
-  document.getElementById('today-films').innerHTML =
-    '<div class="loading">💎 Joyas de la tribu<br><br>Próximamente — cuando la comunidad empiece a sugerir.</div>'
-}
-
-// Filtros de género
-document.querySelectorAll('.genre-pill').forEach(pill => {
+// Genre pills — home
+document.querySelectorAll('#screen-home .genre-pill').forEach(pill => {
   pill.addEventListener('click', function() {
-    document.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'))
+    document.querySelectorAll('#screen-home .genre-pill').forEach(p=>p.classList.remove('active'))
     this.classList.add('active')
-    loadToday(this.dataset.genre || '')
+    currentGenre = this.dataset.genre || ''
+    loadToday(currentGenre)
+  })
+})
+
+// Genre pills — catalog
+document.querySelectorAll('#genre-cat .genre-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('#genre-cat .genre-pill').forEach(p=>p.classList.remove('active'))
+    this.classList.add('active')
+    loadCatalog(this.dataset.genre || '', true)
   })
 })
 </script>
