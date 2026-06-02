@@ -256,7 +256,10 @@
 <div class="screen" id="screen-home">
   <div class="header">
     <div class="header-logo" onclick="logoTap()">ANCLA</div>
-    <div class="header-country"><div class="country-dot"></div><span id="country-label">CO</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="header-country"><div class="country-dot"></div><span id="country-label">CO</span></div>
+      <div id="header-auth-btn" onclick="navTo('lista')" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--anchor);letter-spacing:1px;cursor:pointer;padding:5px 10px;border:1px solid rgba(200,169,110,0.3);border-radius:2px;display:flex;align-items:center;gap:5px"><span>👤</span><span id="header-auth-label">Entrar</span></div>
+    </div>
   </div>
   <div class="search-bar">
     <div class="search-input-wrap">
@@ -356,24 +359,25 @@
 <div class="screen" id="screen-lista">
   <div class="header">
     <div class="header-logo">ANCLA</div>
-    <div id="lista-user-info" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--anchor);letter-spacing:1px;cursor:pointer" onclick="toggleAuthPanel()">La Tribu</div>
+    <div id="lista-user-info" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--anchor);letter-spacing:1px;cursor:pointer;padding:5px 10px;border:1px solid rgba(200,169,110,0.3);border-radius:2px;display:flex;align-items:center;gap:5px" onclick="toggleAuthPanel()"><span>👤</span><span id="lista-user-label">La Tribu · Entrar</span></div>
   </div>
   <div class="scroll-area">
 
     <!-- DEMO KPI (visible sin login) -->
     <div id="kpi-demo" style="margin:16px;padding:20px;background:var(--surface);border:1px solid rgba(200,169,110,0.25);border-radius:4px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--anchor);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px">¿QUÉ PLATAFORMA TE CONVIENE?</div>
-      <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-mid);margin-bottom:16px">Agrega películas y ANCLA calcula la plataforma ideal para tu binge</div>
-      <div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--white)">Netflix</span><span style="font-family:'Playfair Display',serif;font-size:16px;color:var(--anchor);font-weight:700">—%</span></div>
-        <div class="kpi-bar"><div class="kpi-fill" style="width:0%;background:var(--anchor)"></div></div>
+      <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-mid);margin-bottom:16px">Agrega películas — ANCLA calcula qué suscripción te rinde más</div>
+      <div id="kpi-platforms-list">
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">Netflix</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">MAX</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">Prime Video</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">Disney+</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">Star+</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">Paramount+</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
+        <div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-mid)">Pluto TV</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim)">—%</span></div><div class="kpi-bar"><div class="kpi-fill" style="width:0%"></div></div></div>
       </div>
-      <div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--white)">MAX</span><span style="font-family:'Playfair Display',serif;font-size:16px;color:#88ddaa;font-weight:700">—%</span></div>
-        <div class="kpi-bar"><div class="kpi-fill" style="width:0%;background:#88ddaa"></div></div>
-      </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px">
-        ⚠ DEMO · Plataformas aproximadas. Datos exactos por país próximamente.
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px">
+        Agrega títulos a tu lista para activar el análisis →
       </div>
     </div>
 
@@ -792,7 +796,11 @@ async function initAuth(){
 function updateUIForUser(){
   if(!currentUser) return
   const name=currentUser.user_metadata?.display_name||currentUser.email?.split('@')[0]||'Tribu'
-  document.getElementById('lista-user-info').textContent=name
+  // Update all auth entry points
+  const headerLabel=document.getElementById('header-auth-label')
+  if(headerLabel) headerLabel.textContent=name
+  const listaLabel=document.getElementById('lista-user-label')
+  if(listaLabel) listaLabel.textContent=name+' ↓'
   document.getElementById('profile-name-display').textContent=name
   document.getElementById('auth-panel').style.display='none'
   document.getElementById('profile-panel').style.display='block'
@@ -920,7 +928,7 @@ function calculateKPI(){
 
   const totalWeight=bingeList.reduce((s,i)=>s+(i.runtime_min||90)*(i.multiplicador||1)*(i.prioridad||3),0)
   const platforms={}
-  const services=['Netflix','MAX','Prime Video','Disney+','Pluto TV','Star+','Paramount+']
+  const services=['Netflix','MAX','Prime Video','Disney+','Star+','Paramount+','Pluto TV']
   bingeList.forEach(item=>{
     const hash=item.film_title.split('').reduce((a,c)=>a+c.charCodeAt(0),0)
     const p1=services[hash%services.length]
@@ -929,28 +937,31 @@ function calculateKPI(){
     platforms[p1]=(platforms[p1]||0)+w
     if(p1!==p2) platforms[p2]=(platforms[p2]||0)+w*0.5
   })
-  const sorted=Object.entries(platforms).sort((a,b)=>b[1]-a[1]).slice(0,4)
-  const colors=['var(--anchor)','#88ddaa','#88bbee','#dd8888']
+  // Fill any missing platforms with 0
+  services.forEach(s=>{ if(!platforms[s]) platforms[s]=0 })
+  const sorted=Object.entries(platforms).sort((a,b)=>b[1]-a[1])
+  const colors=['var(--anchor)','#88ddaa','#88bbee','#dd8888','#cc88ee','#ddaa88','#888888']
   const kpiDemo=document.getElementById('kpi-demo')
   kpiDemo.innerHTML=`
     <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--anchor);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px">¿QUÉ PLATAFORMA TE CONVIENE?</div>
-    <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-mid);margin-bottom:16px">Basado en tu listado · ${bingeList.length} título${bingeList.length!==1?'s':''} · ${h}h ${m}m total</div>
+    <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-mid);margin-bottom:16px">${bingeList.length} título${bingeList.length!==1?'s':''} · ${h}h ${m}m total de contenido</div>
     ${sorted.map(([p,w],i)=>{
-      const pct=Math.round((w/totalWeight)*100)
-      return `<div style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--white)">${p}${i===0?' ✓':''}</span>
-          <span style="font-family:'Playfair Display',serif;font-size:18px;color:${colors[i]};font-weight:700">${pct}%</span>
+      const pct=totalWeight>0?Math.round((w/totalWeight)*100):0
+      const isTop=i===0&&pct>0
+      return `<div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:${pct>0?'var(--white)':'var(--text-dim)'}">${p}${isTop?' ✓':''}</span>
+          <span style="font-family:'Playfair Display',serif;font-size:${pct>0?'16':'13'}px;color:${pct>0?colors[i]:'var(--text-dim)'};font-weight:700">${pct}%</span>
         </div>
         <div class="kpi-bar"><div class="kpi-fill" style="width:${pct}%;background:${colors[i]}"></div></div>
       </div>`}).join('')}
     <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px">
-      ⚠ DEMO · Plataformas aproximadas. Datos exactos por país próximamente.
+      ⚠ Plataformas aproximadas. Datos exactos por país próximamente.
     </div>`
 }
 
 let listadoSearchTimer=null
-let _searchMap={}
+let _smap={}
 
 async function searchForListado(q){
   clearTimeout(listadoSearchTimer)
@@ -961,11 +972,11 @@ async function searchForListado(q){
       const r=await fetch(`${API}/search?q=${encodeURIComponent(q)}`)
       const d=await r.json()
       if(!d.films?.length){results.style.display='none';return}
-      _searchMap={}
-      d.films.slice(0,5).forEach(f=>{_searchMap[f.tmdb_id]=f})
+      _smap={}
+      d.films.slice(0,5).forEach(f=>{_smap[f.tmdb_id]=f})
       results.style.display='block'
       results.innerHTML=d.films.slice(0,5).map(f=>`
-        <div onclick="_addById(${f.tmdb_id})" style="padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:10px;align-items:center">
+        <div onclick="_pickFilm(${f.tmdb_id})" style="padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:10px;align-items:center">
           <div style="width:32px;height:46px;background:var(--surface);border-radius:2px;overflow:hidden;flex-shrink:0">${f.poster_url?`<img src="${f.poster_url}" style="width:100%;height:100%;object-fit:cover">`:''}</div>
           <div><div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--white)">${f.title}</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim)">${f.year||''} · ${f.type==='series'?'Serie':'Película'}</div></div>
@@ -974,8 +985,8 @@ async function searchForListado(q){
   },300)
 }
 
-async function _addById(tmdbId){
-  const film=_searchMap[tmdbId]
+async function _pickFilm(tmdbId){
+  const film=_smap[tmdbId]
   if(film) await addToListado(film)
 }
 
@@ -985,10 +996,9 @@ async function addToListado(film){
   document.getElementById('listado-search-results').style.display='none'
   const runtime=film.runtime_min||(film.type==='series'?55:110)
 
-  // Asegurar perfil existe antes de insertar
-  await supa.from('ancla_users').upsert({
+  // Crear perfil si no existe (nuevo SQL usa public.profiles)
+  await supa.from('profiles').upsert({
     id:currentUser.id,
-    email:currentUser.email,
     display_name:currentUser.user_metadata?.display_name||currentUser.email?.split('@')[0]
   },{onConflict:'id'})
 
@@ -997,7 +1007,7 @@ async function addToListado(film){
     tmdb_id:film.tmdb_id, runtime_min:runtime, multiplicador:1, prioridad:3
   },{onConflict:'user_id,tmdb_id'})
 
-  if(error){console.error('Listado error:',error);alert('Error: '+error.message);return}
+  if(error){console.error(error);alert('Error al agregar: '+error.message);return}
   await loadBingeList()
 }
 
