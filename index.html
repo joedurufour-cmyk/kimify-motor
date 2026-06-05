@@ -389,12 +389,19 @@ body > * { position:relative; z-index:1; }
   font-family:'IBM Plex Mono', monospace; font-size:8px;
   color:var(--text-dim); letter-spacing:1px; margin-bottom:6px;
 }
-.rank-streamers { display:flex; gap:4px; flex-wrap:wrap; }
+.rank-streamers { display:flex; gap:4px; flex-wrap:wrap; margin-top:2px; }
 .rank-streamer {
   font-family:'IBM Plex Mono', monospace; font-size:7px;
   color:var(--amber-dim); background:var(--amber-glow2);
   padding:2px 5px; border-radius:1px;
   border:1px solid rgba(212,160,68,0.12);
+}
+.rank-badge-free {
+  font-family:'IBM Plex Mono', monospace; font-size:7px;
+  color:#2d8a4e; background:rgba(45,138,78,0.1);
+  padding:2px 6px; border-radius:1px;
+  border:1px solid rgba(45,138,78,0.25);
+  letter-spacing:.5px;
 }
 
 .rank-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
@@ -956,8 +963,286 @@ body > * { position:relative; z-index:1; }
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'https://ancla-backend.vercel.app'
+// ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
+const TMDB_KEY  = localStorage.getItem('ancla_tmdb_key') || ''
+const TMDB_IMG  = 'https://image.tmdb.org/t/p/w500'
+const TMDB_BASE = 'https://api.themoviedb.org/3'
+const API_BASE  = 'https://ancla-backend.vercel.app'  // contadores en Neon
 
+// ── CATÁLOGO EMBEBIDO ─────────────────────────────────────────────────────────
+const CATALOG_DATA = [
+  // ACCIÓN CON PESO
+  { title:'Collateral',year:2004,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'2000s' },
+  { title:'Heat',year:1995,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'1990s' },
+  { title:'Predator',year:1987,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'1980s' },
+  { title:'Die Hard',year:1988,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'1980s' },
+  { title:'Man on Fire',year:2004,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'2000s' },
+  { title:'Sicario',year:2015,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'2010s' },
+  { title:'300',year:2007,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'2000s' },
+  { title:'Braveheart',year:1995,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'1990s' },
+  { title:'Leon: The Professional',year:1994,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'1990s' },
+  { title:'Munich',year:2005,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'2000s' },
+  { title:'Mad Max: Fury Road',year:2015,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'2010s' },
+  { title:'The Fugitive',year:1993,t:'movie',g:'accion_con_peso',ta:'gravitacional',era:'1990s' },
+  // TERROR PSICOLÓGICO
+  { title:'The Thing',year:1982,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'1980s' },
+  { title:'The Shining',year:1980,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'1980s' },
+  { title:'The Silence of the Lambs',year:1991,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'1990s' },
+  { title:'Se7en',year:1995,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'1990s' },
+  { title:'Sinister',year:2012,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'Hereditary',year:2018,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'Midsommar',year:2019,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'Get Out',year:2017,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'The Conjuring',year:2013,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'It',year:2017,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'The Black Phone',year:2021,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'Talk to Me',year:2022,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'Brightburn',year:2019,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'The Fly',year:1986,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'1980s' },
+  { title:'Insidious',year:2010,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2010s' },
+  { title:'The Mist',year:2007,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'2000s' },
+  { title:'Misery',year:1990,t:'movie',g:'terror_psicologico',ta:'gravitacional',era:'1990s' },
+  // SCIFI DE IDEAS
+  { title:'Blade Runner',year:1982,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'1980s' },
+  { title:'Blade Runner 2049',year:2017,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2010s' },
+  { title:'Interstellar',year:2014,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2010s' },
+  { title:'Arrival',year:2016,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2010s' },
+  { title:'The Matrix',year:1999,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'1990s' },
+  { title:'Children of Men',year:2006,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2000s' },
+  { title:'Ex Machina',year:2014,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2010s' },
+  { title:'Annihilation',year:2018,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2010s' },
+  { title:'2001: A Space Odyssey',year:1968,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'1960s' },
+  { title:'Twelve Monkeys',year:1995,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'1990s' },
+  { title:'Dune',year:2021,t:'movie',g:'scifi_de_ideas',ta:'gravitacional',era:'2010s' },
+  // NOIR Y CRIMEN
+  { title:'Goodfellas',year:1990,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1990s' },
+  { title:'The Godfather',year:1972,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1970s' },
+  { title:'The Godfather Part II',year:1974,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1970s' },
+  { title:'Pulp Fiction',year:1994,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1990s' },
+  { title:'L.A. Confidential',year:1997,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1990s' },
+  { title:'The Departed',year:2006,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'2000s' },
+  { title:'Reservoir Dogs',year:1992,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1990s' },
+  { title:'No Country for Old Men',year:2007,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'2000s' },
+  { title:'Fargo',year:1996,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'1990s' },
+  { title:'Zodiac',year:2007,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'2000s' },
+  { title:'Nueve Reinas',year:2000,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'2000s' },
+  { title:'Nightcrawler',year:2014,t:'movie',g:'noir_y_crimen',ta:'gravitacional',era:'2010s' },
+  // FRANQUICIA CON ALMA
+  { title:'Man of Steel',year:2013,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'2010s' },
+  { title:'Batman v Superman: Dawn of Justice',year:2016,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'2010s' },
+  { title:"Zack Snyder's Justice League",year:2021,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'2010s' },
+  { title:'Watchmen',year:2009,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'2000s' },
+  { title:'The Terminator',year:1984,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'1980s' },
+  { title:'Terminator 2: Judgment Day',year:1991,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'1990s' },
+  { title:'Alien',year:1979,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'1970s' },
+  { title:'Aliens',year:1986,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'1980s' },
+  { title:'Batman',year:1989,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'1980s' },
+  { title:'Batman Returns',year:1992,t:'movie',g:'franquicia_con_alma',ta:'gravitacional',era:'1990s' },
+  // MICRO SORPRESAS
+  { title:'Memento',year:2000,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2000s' },
+  { title:'The Prestige',year:2006,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2000s' },
+  { title:'The Usual Suspects',year:1995,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'1990s' },
+  { title:'Fight Club',year:1999,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'1990s' },
+  { title:'Shutter Island',year:2010,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2010s' },
+  { title:'Gone Girl',year:2014,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2010s' },
+  { title:'Parasite',year:2019,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2010s' },
+  { title:'Oldboy',year:2003,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2000s' },
+  { title:'Mulholland Drive',year:2001,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2000s' },
+  { title:'The Sixth Sense',year:1999,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'1990s' },
+  { title:'Unbreakable',year:2000,t:'movie',g:'micro_sorpresas',ta:'gravitacional',era:'2000s' },
+  // FANTASÍA CON GRAVEDAD
+  { title:'The Lord of the Rings: The Fellowship of the Ring',year:2001,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'2000s' },
+  { title:'The Lord of the Rings: The Two Towers',year:2002,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'2000s' },
+  { title:'The Lord of the Rings: The Return of the King',year:2003,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'2000s' },
+  { title:'El espinazo del diablo',year:2001,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'2000s' },
+  { title:"Pan's Labyrinth",year:2006,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'2000s' },
+  { title:'Princess Mononoke',year:1997,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'1990s' },
+  { title:'Pacific Rim',year:2013,t:'movie',g:'fantasia_con_gravedad',ta:'valida_finita',era:'2010s' },
+  { title:'Kong: Skull Island',year:2017,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'2010s' },
+  { title:'The Neverending Story',year:1984,t:'movie',g:'fantasia_con_gravedad',ta:'gravitacional',era:'1980s' },
+  // GUERRA SIN GLORIA
+  { title:"Schindler's List",year:1993,t:'movie',g:'guerra_sin_gloria',ta:'gravitacional',era:'1990s' },
+  { title:'Apocalypse Now',year:1979,t:'movie',g:'guerra_sin_gloria',ta:'gravitacional',era:'1970s' },
+  { title:'Full Metal Jacket',year:1987,t:'movie',g:'guerra_sin_gloria',ta:'gravitacional',era:'1980s' },
+  { title:'Saving Private Ryan',year:1998,t:'movie',g:'guerra_sin_gloria',ta:'gravitacional',era:'1990s' },
+  { title:'Platoon',year:1986,t:'movie',g:'guerra_sin_gloria',ta:'gravitacional',era:'1980s' },
+  { title:'Black Hawk Down',year:2001,t:'movie',g:'guerra_sin_gloria',ta:'gravitacional',era:'2000s' },
+  // DRAMA SIN RED
+  { title:'Amores Perros',year:2000,t:'movie',g:'drama_sin_red',ta:'gravitacional',era:'2000s' },
+  { title:'Requiem for a Dream',year:2000,t:'movie',g:'drama_sin_red',ta:'gravitacional',era:'2000s' },
+  { title:'There Will Be Blood',year:2007,t:'movie',g:'drama_sin_red',ta:'gravitacional',era:'2000s' },
+  { title:'The Shawshank Redemption',year:1994,t:'movie',g:'drama_sin_red',ta:'gravitacional',era:'1990s' },
+  { title:'American History X',year:1998,t:'movie',g:'drama_sin_red',ta:'gravitacional',era:'1990s' },
+  { title:'Trainspotting',year:1996,t:'movie',g:'drama_sin_red',ta:'gravitacional',era:'1990s' },
+  // ANCLAS CULTURALES
+  { title:'Back to the Future',year:1985,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'Stand by Me',year:1986,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'Top Gun',year:1986,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'Raiders of the Lost Ark',year:1981,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'Indiana Jones and the Last Crusade',year:1989,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'Ghostbusters',year:1984,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'The Breakfast Club',year:1985,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'E.T. the Extra-Terrestrial',year:1982,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'RoboCop',year:1987,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  { title:'Beetlejuice',year:1988,t:'movie',g:'ancla_cultural',ta:'gravitacional',era:'1980s' },
+  // PEAK TV
+  { title:'The Sopranos',year:1999,t:'tv',g:'peak_tv',ta:'gravitacional',era:'1990s' },
+  { title:'The Wire',year:2002,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2000s' },
+  { title:'Breaking Bad',year:2008,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2000s' },
+  { title:'True Detective',year:2014,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Chernobyl',year:2019,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Band of Brothers',year:2001,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2000s' },
+  { title:'The Americans',year:2013,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Dark',year:2017,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Mindhunter',year:2017,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Oz',year:1997,t:'tv',g:'peak_tv',ta:'gravitacional',era:'1990s' },
+  { title:'Deadwood',year:2004,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2000s' },
+  { title:'Severance',year:2022,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'The Boys',year:2019,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Invincible',year:2021,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Euphoria',year:2019,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'Shameless',year:2011,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  { title:'The Outsider',year:2020,t:'tv',g:'peak_tv',ta:'gravitacional',era:'2010s' },
+  // COMEDIA CON VERDAD
+  { title:'Malcolm in the Middle',year:2000,t:'tv',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+  { title:'Seinfeld',year:1989,t:'tv',g:'comedia_con_verdad',ta:'gravitacional',era:'1990s' },
+  { title:'The Office',year:2005,t:'tv',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+  { title:'Scrubs',year:2001,t:'tv',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+  { title:'Arrested Development',year:2003,t:'tv',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+  { title:'Curb Your Enthusiasm',year:2000,t:'tv',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+  { title:'Anchorman: The Legend of Ron Burgundy',year:2004,t:'movie',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+  { title:'Step Brothers',year:2008,t:'movie',g:'comedia_con_verdad',ta:'gravitacional',era:'2000s' },
+]
+
+const EDITORIAL_DATA = {
+  'Collateral': 'Mann filmó Los Ángeles de noche con cámaras digitales porque quería esa frialdad fluorescente que el celuloide no podía capturar. Foxx hace el trabajo de su vida siendo el hombre más cobarde de la pantalla.\n\nNo es una película de acción. Es una conversación sobre para qué sirve una vida, con jazz de fondo y Los Ángeles como tercer personaje.',
+  'Heat': 'Pacino y DeNiro en la misma pantalla por primera vez — y Mann los pone a tomar café. No es un thriller de policías y ladrones. Es un estudio de dos hombres que eligieron vidas opuestas y descubrieron que son la misma persona.\n\nLa escena del tiroteo en downtown Los Ángeles redefinió cómo se filma la violencia urbana.',
+  'The Thing': 'Carpenter filmó el miedo más específico que existe: no saber si la persona a tu lado sigue siendo la persona a tu lado. La Antártida es una trampa perfecta donde la paranoia es la única respuesta racional.\n\nCuarenta años después sigue funcionando exactamente igual.',
+  'El espinazo del diablo': 'Del Toro pregunta desde el primer minuto qué es un fantasma — y responde él mismo: un sentimiento atrapado, condenado a repetirse. El verdadero monstruo tiene codicia y cobardía, no poderes sobrenaturales.\n\nVer antes de El Laberinto del Fauno. Las dos forman una sola obra.',
+  "Pan's Labyrinth": 'Del Toro no filmó una película de fantasía. Filmó lo que hace una mente de doce años para sobrevivir el fascismo. El Capitán Vidal es el monstruo más aterrador de su filmografía porque no necesita poderes. Solo necesita orden.',
+  'Man of Steel': 'Snyder no filmó un superhéroe. Filmó a un hombre que creció escondiendo exactamente lo que era. Jonathan Kent muriendo para proteger ese secreto es la decisión más honesta de toda la película.\n\nHans Zimmer reemplazando a Williams fue la declaración más valiente del score de superhéroes de la década.',
+  'Fight Club': 'La primera vez ves una historia sobre un hombre que pierde el control. La segunda vez ves exactamente cómo Fincher te escondió la respuesta desde el primer fotograma.\n\nNorton y Pitt haciendo dos versiones del mismo hombre. Por eso volvés.',
+  'Pulp Fiction': 'Tarantino inventó una manera de usar la no linealidad como argumento en sí mismo. La primera vez te deslumbra. La segunda vez entendés la relojería.\n\nCada conversación parece sobre nada y es sobre todo. Eso es escritura — no diálogo.',
+  'The Godfather': 'Coppola filmó la película más influyente del cine americano moderno sobre una familia. A los 20 años es sobre hombres poderosos. A los 40 es sobre lo que le hacés a tu familia por ambición.\n\nLa misma película. Vos sos quien cambió.',
+  'Memento': 'La memoria como identidad. La estructura ES el tema — Nolan construyó una película que solo entendés completamente viéndola dos veces.\n\nEl thriller más original de la década. Cada revisión revela lo que la primera no dejó ver.',
+  'Se7en': 'Fincher y Somerset caminando por una ciudad que ya sabe que está perdida. El final no es un truco — es la conclusión inevitable de todo lo que la película construyó.\n\nBrad Pitt y Morgan Freeman como la tensión entre idealismo y cinismo.',
+  'Sinister': 'Derrickson filmó el miedo que no necesita música. Las películas en súper 8 que Hawke encuentra en el ático son los 10 minutos más perturbadores del terror contemporáneo.\n\nBughuul casi sin aparecer. Lo que no se muestra es más aterrador.',
+  'Hereditary': 'El duelo como posesión. Toni Collette construye el colapso de una mujer con una precisión que el Oscar no supo reconocer.\n\nAri Aster no filmó terror. Filmó una familia destruyéndose desde adentro — y el horror es la consecuencia.',
+  'Back to the Future': 'Zemeckis construyó una arquitectura narrativa perfecta — cada detalle del primer acto paga en el tercero. Cada revisión revela una conexión que no viste antes.\n\nNo es una película de viaje en el tiempo. Es sobre lo que le debés a la gente que te formó.',
+  'The Sopranos': 'Chase filmó la mafia como rutina doméstica. Tony Soprano en terapia no es un chiste — es la premisa más honesta: un hombre que destruye todo lo que ama y necesita que alguien le diga que no es su culpa.\n\nEl final es la única respuesta honesta posible.',
+  'The Wire': 'No hay héroes. No hay villanos. Solo un sistema que destruye a todos los que entran — policías, dealers, políticos, periodistas.\n\nLa serie más importante de la televisión americana. No la más entretenida — la más verdadera.',
+  'Breaking Bad': 'La transformación más documentada de la televisión. Walter White no se convirtió en monstruo — reveló lo que siempre fue cuando las circunstancias se lo permitieron.\n\nGilligan construyó el arco moral más preciso de la TV.',
+  'Severance': 'La premisa más original de la televisión en una década: un procedimiento quirúrgico que separa la memoria laboral de la personal.\n\nNo es ciencia ficción. Es una alegoría perfecta sobre cómo el trabajo consume la identidad.',
+  'Chernobyl': 'La mentira institucional como catástrofe. Cada dato es real. Cada decisión fue tomada exactamente así.\n\nMazin no filmó un desastre nuclear. Filmó lo que pasa cuando un sistema construido sobre la mentira enfrenta una verdad que no puede ocultar.',
+  'Dark': 'La narrativa de tiempo más ambiciosa de la televisión. Tres generaciones. Cuatro líneas temporales. Un pueblo alemán como laberinto.\n\nVer en alemán con subtítulos. La voz forma parte de la experiencia. Requiere atención total. Recompensa con intereses.',
+  'True Detective': 'Rust Cohle habla durante ocho horas sobre la oscuridad — y no podés dejar de escucharlo. McConaughey construyó un personaje que parece imposible de sostener en el primer episodio y resulta ser el más humano en el último.',
+  'Seinfeld': 'Una serie sobre nada — eso era el marketing. La realidad: una serie sobre cómo la gente realmente piensa pero nunca dice.\n\nCada episodio revela algo nuevo sobre la mezquindad humana — incluyendo la tuya.',
+  'Malcolm in the Middle': 'No es una comedia familiar. Es una comedia sobre sobrevivir a una familia que no tiene recursos para ser lo que quiere ser.\n\nFrankie Muniz mirando a cámara como si supiera que estás ahí.',
+}
+
+const RETURNS_DATA = {
+  'The Godfather':6789,'Pulp Fiction':5234,'The Matrix':5102,
+  'The Silence of the Lambs':4501,'Fight Club':4102,
+  'The Lord of the Rings: The Fellowship of the Ring':4230,
+  'Heat':3891,'Goodfellas':3876,'Se7en':3210,'Sinister':3210,
+  'Interstellar':3102,'Collateral':1247,"Pan's Labyrinth":2341,
+  'Man of Steel':2103,'The Thing':2847,'Memento':1876,
+  'The Usual Suspects':1987,'The Prestige':2109,'Parasite':4100,
+  'Hereditary':2890,'Back to the Future':3201,'Kong: Skull Island':2678,
+  'Breaking Bad':5890,'The Wire':4230,'The Sopranos':5102,
+  'Dark':3401,'Severance':2890,'Chernobyl':3102,'True Detective':4501,
+  'Seinfeld':3876,'Malcolm in the Middle':2341,'The Boys':2890,
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function stableId(title, year) {
+  let h = 0, s = `${title}${year}`
+  for (let i = 0; i < s.length; i++) { h = ((h<<5)-h)+s.charCodeAt(i); h|=0 }
+  return Math.abs(h)
+}
+
+function mockStreaming(id) {
+  const pools = ['Netflix','MAX','Prime Video','Disney+','Pluto TV']
+  const i = id % pools.length
+  return [
+    { service: pools[i],          type: pools[i]==='Pluto TV'?'free':'subscription' },
+    { service: pools[(i+2)%pools.length], type: 'subscription' },
+  ]
+}
+
+function buildFilm(f) {
+  const id  = stableId(f.title, f.year)
+  const ret = RETURNS_DATA[f.title] || 0
+  return {
+    tmdb_id:       id,
+    title:         f.title,
+    year:          f.year,
+    era:           f.era,
+    type:          f.t === 'tv' ? 'series' : 'film',
+    ancla_type:    f.ta,
+    ancla_genre:   f.g,
+    poster_url:    localStorage.getItem(`poster:${id}`) || null,
+    synopsis_es:   null,
+    editorial_text:EDITORIAL_DATA[f.title] || null,
+    return_count:  parseInt(localStorage.getItem(`ret:${id}`) || ret),
+    is_curated:    !!EDITORIAL_DATA[f.title],
+    scores:        { imdb: null },
+    streaming:     mockStreaming(id),
+    _raw:          f,
+  }
+}
+
+const ALL_FILMS = CATALOG_DATA.map(buildFilm)
+  .sort((a,b) => b.return_count - a.return_count)
+
+const ALL_GENRES = [...new Set(CATALOG_DATA.map(f=>f.g))].map(id => ({
+  id, label: '', count: CATALOG_DATA.filter(f=>f.g===id).length
+}))
+
+// ── TMDB DIRECTO ──────────────────────────────────────────────────────────────
+async function fetchPoster(film) {
+  const key = `poster:${film.tmdb_id}`
+  if (film.poster_url) return film.poster_url
+  const cached = localStorage.getItem(key)
+  if (cached) return cached
+
+  const k = localStorage.getItem('ancla_tmdb_key') || TMDB_KEY
+  if (!k) return null
+
+  try {
+    const type     = film.type === 'series' ? 'tv' : 'movie'
+    const yearParm = film.type === 'series'
+      ? `first_air_date_year=${film.year}` : `year=${film.year}`
+    const url = `${TMDB_BASE}/search/${type}?api_key=${k}&query=${encodeURIComponent(film.title)}&${yearParm}&language=es-ES`
+    const d = await fetch(url).then(r=>r.json())
+    const result = d.results?.[0]
+    const poster = result?.poster_path ? `${TMDB_IMG}${result.poster_path}` : null
+    const score  = result?.vote_average || null
+    if (poster) localStorage.setItem(key, poster)
+    if (score)  localStorage.setItem(`score:${film.tmdb_id}`, score)
+    return poster
+  } catch { return null }
+}
+
+async function enrichVisible(films) {
+  const k = localStorage.getItem('ancla_tmdb_key') || TMDB_KEY
+  if (!k) return
+  for (const f of films) {
+    if (f.poster_url) continue
+    const poster = await fetchPoster(f)
+    if (!poster) continue
+    f.poster_url = poster
+    // Update any rendered img
+    const imgs = document.querySelectorAll(`[data-film-id="${f.tmdb_id}"] img, [data-film-id="${f.tmdb_id}"] .no-poster`)
+    imgs.forEach(el => {
+      if (el.tagName === 'IMG') { el.src = poster }
+      else { el.outerHTML = `<img src="${poster}" alt="${f.title}" loading="lazy">` }
+    })
+    await new Promise(r=>setTimeout(r,100)) // gentle rate limit
+  }
+}
+
+// ── GÉNEROS ───────────────────────────────────────────────────────────────────
 const GENRES = {
   accion_con_peso:     'Acción con Peso',
   terror_psicologico:  'Terror Psicológico',
@@ -984,7 +1269,6 @@ const App = {
   },
 
   // ── Nav ────────────────────────────────────────────────────────────────
-
   go(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
     document.getElementById('screen-' + screen)?.classList.add('active')
@@ -1007,7 +1291,7 @@ const App = {
     document.getElementById('detail-nav-title').textContent = f.title
     window.location.hash = 'film/' + f.tmdb_id
     this.renderDetail(f)
-    this.fetchDetail(f.tmdb_id)
+    this.enrichDetail(f)
   },
 
   back() {
@@ -1028,59 +1312,63 @@ const App = {
   },
 
   // ── Splash stats ────────────────────────────────────────────────────────
-
-  async loadSplashStats() {
-    try {
-      const d = await fetch(`${API}/stats`).then(r => r.json())
-      const el = document.getElementById('splash-films')
-      const er = document.getElementById('splash-returns')
-      if (el) el.textContent = d.total_titles || 172
-      if (er) er.textContent = this.fmt(d.total_returns || 62000)
-    } catch {}
+  loadSplashStats() {
+    const total  = CATALOG_DATA.length
+    const rets   = Object.values(RETURNS_DATA).reduce((a,b)=>a+b,0)
+    const elF = document.getElementById('splash-films')
+    const elR = document.getElementById('splash-returns')
+    if (elF) elF.textContent = total
+    if (elR) elR.textContent = this.fmt(rets)
   },
 
   // ── Home ────────────────────────────────────────────────────────────────
-
-  async loadHome() {
+  loadHome() {
     this.loadSplashStats()
     const cont = document.getElementById('home-content')
     cont.innerHTML = `
       <div class="section"><span class="section-label">HOY ANCLA RECOMIENDA</span></div>
       <div class="today-carousel">
-        ${[1,2,3].map(() => `<div class="skel skel-carousel-card"></div>`).join('')}
+        ${[1,2,3].map(()=>`<div class="skel skel-carousel-card"></div>`).join('')}
       </div>`
-    try {
-      const [today, films, genres] = await Promise.all([
-        fetch(`${API}/films/today?country=${this.s.country}`).then(r => r.json()),
-        fetch(`${API}/films?limit=20&sort=return_count&country=${this.s.country}`).then(r => r.json()),
-        fetch(`${API}/genres`).then(r => r.json()),
-      ])
-      this.s.today = today.films || []
-      this.s.films = films.films || []
-      this.s.total = films.total || 0
-      this.renderHome(genres.genres || [])
-    } catch(e) {
-      cont.innerHTML = `<div class="loading-msg">Error de red.<br>Verificá tu conexión.</div>`
-    }
+
+    this.s.genre = null
+    this.s.page  = 0
+    this.s.films = ALL_FILMS.slice(0, 20)
+    this.s.total = ALL_FILMS.length
+
+    // Hoy: 3 gravitacionales rotando por día del año
+    const grav = ALL_FILMS.filter(f => f.ancla_type === 'gravitacional' && f.type === 'film')
+    const now  = new Date()
+    const dy   = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000)
+    const si   = dy % grav.length
+    this.s.today = [0,1,2].map(i => grav[(si+i)%grav.length])
+
+    this.renderHome(ALL_GENRES)
+
+    // Cargar contadores reales desde Neon (sin bloquear render)
+    this.syncCounts()
+
+    // Cargar posters en background
+    enrichVisible([...this.s.today, ...this.s.films])
   },
 
   renderHome(genres) {
-    const cont = document.getElementById('home-content')
-    const weekday = new Date().toLocaleDateString('es-CO', {weekday:'long', day:'numeric', month:'long'})
+    const cont    = document.getElementById('home-content')
+    const weekday = new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'})
     cont.innerHTML = `
       <div class="section">
         <span class="section-label">HOY ANCLA RECOMIENDA</span>
         <span class="section-right">${weekday}</span>
       </div>
       <div class="today-carousel">
-        ${this.s.today.map((f,i) => this.cardToday(f,i)).join('')}
+        ${this.s.today.map((f,i)=>this.cardToday(f,i)).join('')}
       </div>
 
       <div class="genre-strip" id="genre-strip">
         <div class="genre-tab active" onclick="App.filterGenre(null,this)">TODOS</div>
-        ${genres.map(g => `
+        ${genres.map(g=>`
           <div class="genre-tab" onclick="App.filterGenre('${g.id}',this)">
-            ${(GENRES[g.id] || g.label).toUpperCase()}
+            ${(GENRES[g.id]||g.id).toUpperCase()}
           </div>`).join('')}
       </div>
 
@@ -1089,55 +1377,55 @@ const App = {
         <span class="section-right">${this.s.total} títulos</span>
       </div>
       <div class="rank-list" id="rank-list">
-        ${this.s.films.map((f,i) => this.cardRank(f,i+1)).join('')}
+        ${this.s.films.map((f,i)=>this.cardRank(f,i+1)).join('')}
       </div>
-      <button class="load-more" id="load-more-btn" onclick="App.loadMore()">
-        CARGAR MÁS
-      </button>
+      <button class="load-more" id="load-more-btn" onclick="App.loadMore()">CARGAR MÁS</button>
       <div class="freemium-strip">
         <span class="freemium-text">Guardá tu lista para siempre en todos tus dispositivos</span>
         <span class="freemium-btn" onclick="App.go('auth')">CREAR CUENTA →</span>
-      </div>
-    `
+      </div>`
   },
 
   cardToday(f, i) {
+    const poster = f.poster_url
+      ? `<img src="${f.poster_url}" alt="${f.title}" loading="${i===0?'eager':'lazy'}">`
+      : `<span class="no-poster">🎬</span>`
     return `
-      <div class="today-card" onclick="App.openFilm(${f.tmdb_id})">
+      <div class="today-card" onclick="App.openFilm(${f.tmdb_id})" data-film-id="${f.tmdb_id}">
         <div class="today-poster">
-          ${f.poster_url
-            ? `<img src="${f.poster_url}" alt="${f.title}" loading="${i===0?'eager':'lazy'}">`
-            : '🎬'}
+          ${poster}
           <div class="today-poster-grad"></div>
           <div class="today-badge ${f.type==='series'?'badge-tv':'badge-film'}">
-            ${f.type==='series' ? 'SERIE' : 'FILM'}
+            ${f.type==='series'?'SERIE':'FILM'}
           </div>
           <div class="today-num">${i+1}</div>
         </div>
         <div class="today-info">
           <div class="today-genre">${(GENRES[f.ancla_genre]||'').toUpperCase()}</div>
           <div class="today-title">${f.title}</div>
-          <div class="today-meta">${f.year} · ${f.era || ''}</div>
+          <div class="today-meta">${f.year} · ${f.era||''}</div>
           <div class="today-returns">${this.fmt(f.return_count)}</div>
         </div>
       </div>`
   },
 
   cardRank(f, n) {
+    const freeS = (f.streaming||[]).find(s=>s.type==='free')
+    const paidS = (f.streaming||[]).filter(s=>s.type!=='free')
+    const poster = f.poster_url
+      ? `<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`
+      : `<span class="no-poster">🎬</span>`
     return `
-      <div class="rank-item" onclick="App.openFilm(${f.tmdb_id})">
+      <div class="rank-item" onclick="App.openFilm(${f.tmdb_id})" data-film-id="${f.tmdb_id}">
         <div class="rank-num">${n}</div>
-        <div class="rank-poster">
-          ${f.poster_url
-            ? `<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`
-            : '🎬'}
-        </div>
+        <div class="rank-poster">${poster}</div>
         <div class="rank-body">
           <div class="rank-type">${f.type==='series'?'SERIE':'PELÍCULA'} · ${f.era||''}</div>
           <div class="rank-title">${f.title}</div>
           <div class="rank-meta">${f.year} · ${GENRES[f.ancla_genre]||''}</div>
           <div class="rank-streamers">
-            ${(f.streaming||[]).map(s=>`<span class="rank-streamer">${s.service}</span>`).join('')}
+            ${freeS?`<span class="rank-badge-free">GRATIS · ${freeS.service}</span>`:''}
+            ${paidS.map(s=>`<span class="rank-streamer">${s.service}</span>`).join('')}
           </div>
         </div>
         <div class="rank-right">
@@ -1147,57 +1435,51 @@ const App = {
       </div>`
   },
 
-  async filterGenre(genre, el) {
-    document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'))
+  filterGenre(genre, el) {
+    document.querySelectorAll('.genre-tab').forEach(t=>t.classList.remove('active'))
     el.classList.add('active')
     this.s.genre = genre; this.s.page = 0
     const list = document.getElementById('rank-list')
     if (!list) return
-    list.innerHTML = `<div class="loading-msg" style="padding:24px">CARGANDO...</div>`
-    try {
-      const url = genre
-        ? `${API}/films?limit=20&ancla_genre=${genre}&country=${this.s.country}`
-        : `${API}/films?limit=20&sort=return_count&country=${this.s.country}`
-      const d = await fetch(url).then(r => r.json())
-      this.s.films = d.films || []
-      this.s.total = d.total || 0
-      list.innerHTML = this.s.films.map((f,i) => this.cardRank(f,i+1)).join('')
-    } catch { list.innerHTML = `<div class="loading-msg">Error. Intentá de nuevo.</div>` }
+    const filtered = genre
+      ? ALL_FILMS.filter(f=>f.ancla_genre===genre)
+      : ALL_FILMS
+    this.s.films = filtered.slice(0,20)
+    this.s.total = filtered.length
+    list.innerHTML = this.s.films.map((f,i)=>this.cardRank(f,i+1)).join('')
+    enrichVisible(this.s.films)
   },
 
-  async loadMore() {
+  loadMore() {
     const btn = document.getElementById('load-more-btn')
-    if (!btn || btn.disabled) return
-    btn.disabled = true; btn.textContent = 'CARGANDO...'
+    if (!btn||btn.disabled) return
     this.s.page++
     const off = this.s.page * 20
-    const url = this.s.genre
-      ? `${API}/films?limit=20&offset=${off}&ancla_genre=${this.s.genre}&country=${this.s.country}`
-      : `${API}/films?limit=20&offset=${off}&sort=return_count&country=${this.s.country}`
-    try {
-      const d = await fetch(url).then(r => r.json())
-      const more = d.films || []
-      const list = document.getElementById('rank-list')
-      const offset = this.s.films.length
-      this.s.films.push(...more)
-      if (list) list.insertAdjacentHTML('beforeend', more.map((f,i) => this.cardRank(f, offset+i+1)).join(''))
-      btn.disabled = false; btn.textContent = 'CARGAR MÁS'
-      if (more.length < 20) { btn.disabled = true; btn.textContent = '— FIN DEL CATÁLOGO —' }
-    } catch { btn.disabled = false; btn.textContent = 'CARGAR MÁS' }
+    const src = this.s.genre ? ALL_FILMS.filter(f=>f.ancla_genre===this.s.genre) : ALL_FILMS
+    const more = src.slice(off, off+20)
+    const list = document.getElementById('rank-list')
+    const offset = this.s.films.length
+    this.s.films.push(...more)
+    if (list) list.insertAdjacentHTML('beforeend', more.map((f,i)=>this.cardRank(f,offset+i+1)).join(''))
+    enrichVisible(more)
+    if (this.s.films.length >= src.length) {
+      btn.disabled=true; btn.textContent='— FIN DEL CATÁLOGO —'
+    }
   },
 
   // ── Detail ──────────────────────────────────────────────────────────────
-
-  async openFilm(id) {
-    const local = [...this.s.films, ...this.s.today].find(f => f.tmdb_id === id)
-    this.goDetail(local || { tmdb_id: id, title: '...' })
+  openFilm(id) {
+    const f = ALL_FILMS.find(f=>f.tmdb_id===id)
+      || [...this.s.films,...this.s.today].find(f=>f.tmdb_id===id)
+    if (f) this.goDetail(f)
   },
 
   renderDetail(f) {
-    const inList = this.s.list.find(l => l.id === f.tmdb_id)
+    const inList  = this.s.list.find(l=>l.id===f.tmdb_id)
+    const score   = parseFloat(localStorage.getItem(`score:${f.tmdb_id}`)) || f.scores?.imdb
     document.getElementById('detail-content').innerHTML = `
-      <div class="detail-hero">
-        ${f.poster_url ? `<img src="${f.poster_url}" alt="${f.title}">` : '🎬'}
+      <div class="detail-hero" data-film-id="${f.tmdb_id}">
+        ${f.poster_url?`<img src="${f.poster_url}" alt="${f.title}">`:`<span class="no-poster" style="font-size:80px;display:flex;align-items:center;justify-content:center;height:320px">🎬</span>`}
         <div class="detail-hero-grad"></div>
         <div class="detail-hero-text">
           <div class="detail-hero-genre">${(GENRES[f.ancla_genre]||'').toUpperCase()}</div>
@@ -1208,33 +1490,33 @@ const App = {
       <div class="detail-body">
         <div class="detail-metrics">
           <div class="metric">
-            <span class="metric-val">${f.scores?.imdb ? f.scores.imdb.toFixed(1) : '—'}</span>
+            <span class="metric-val">${score?score.toFixed(1):'—'}</span>
             <span class="metric-key">IMDB</span>
           </div>
           <div class="metric">
-            <span class="metric-val">${f.year || '—'}</span>
+            <span class="metric-val">${f.year||'—'}</span>
             <span class="metric-key">AÑO</span>
           </div>
           <div class="metric">
-            <span class="metric-val">${f.type === 'series' ? 'SERIE' : 'FILM'}</span>
-            <span class="metric-key">FORMATO</span>
+            <span class="metric-val" id="detail-runtime">—</span>
+            <span class="metric-key">DURACIÓN</span>
           </div>
           <div class="metric">
-            <span class="metric-val">${f.era || '—'}</span>
-            <span class="metric-key">ERA</span>
+            <span class="metric-val">${f.type==='series'?'SERIE':'FILM'}</span>
+            <span class="metric-key">FORMATO</span>
           </div>
         </div>
 
-        ${f.editorial_text ? `
+        ${f.editorial_text?`
           <div class="editorial-block">
             <div class="editorial-label">FICHA ANCLA</div>
             <div class="editorial-text">${f.editorial_text}</div>
-          </div>` :
-          f.synopsis_es ? `
+          </div>`
+        : f.synopsis_es?`
           <div class="editorial-block">
             <div class="editorial-label">SINOPSIS</div>
             <div class="editorial-text">${f.synopsis_es}</div>
-          </div>` : ''}
+          </div>`:''}
 
         <div class="return-block">
           <div class="return-big">
@@ -1246,10 +1528,10 @@ const App = {
             onclick="App.doReturn(event,${f.tmdb_id})">↩ YO TAMBIÉN VOLVÍ</button>
         </div>
 
-        ${(f.streaming||[]).length ? `
+        ${(f.streaming||[]).length?`
           <div class="streaming-section">
             <div class="streaming-label">DISPONIBLE EN</div>
-            ${(f.streaming||[]).map(s => `
+            ${(f.streaming||[]).map(s=>`
               <a class="streamer-row" href="${this.jw(f.title)}" target="_blank" rel="noopener">
                 <div class="streamer-row-left">
                   <span class="streamer-name">${s.service}</span>
@@ -1260,41 +1542,114 @@ const App = {
             <a class="jw-link" href="${this.jw(f.title)}" target="_blank" rel="noopener">
               Ver disponibilidad completa en JustWatch →
             </a>
-          </div>` : ''}
+          </div>`:''}
 
         <button class="btn-save ${inList?'saved':''}" id="btn-save-${f.tmdb_id}"
           onclick="App.toggleList(${f.tmdb_id},'${f.title.replace(/'/g,"\\'")}')">
-          ${inList ? '✓ EN TU LISTA' : '+ GUARDAR EN MI LISTA'}
+          ${inList?'✓ EN TU LISTA':'+ GUARDAR EN MI LISTA'}
         </button>
 
-        ${f.also_returned?.length ? `
+        ${ALL_FILMS.filter(x=>x.ancla_genre===f.ancla_genre&&x.tmdb_id!==f.tmdb_id).length?`
           <div>
             <div class="similar-label">TAMBIÉN VOLVIERON A VER</div>
-            ${f.also_returned.map((s,i) => this.cardRank(s,i+1)).join('')}
-          </div>` : ''}
+            ${ALL_FILMS.filter(x=>x.ancla_genre===f.ancla_genre&&x.tmdb_id!==f.tmdb_id).slice(0,3).map((s,i)=>this.cardRank(s,i+1)).join('')}
+          </div>`:''}
       </div>`
   },
 
-  async fetchDetail(id) {
+  async enrichDetail(f) {
+    const k = localStorage.getItem('ancla_tmdb_key') || TMDB_KEY
+    if (!k) return
     try {
-      const f = await fetch(`${API}/films/${id}?country=${this.s.country}`).then(r => r.json())
-      this.s.current = f
-      document.getElementById('detail-nav-title').textContent = f.title
-      this.renderDetail(f)
+      const type    = f.type==='series'?'tv':'movie'
+      const yearP   = f.type==='series'?`first_air_date_year=${f.year}`:`year=${f.year}`
+      const res     = await fetch(`${TMDB_BASE}/search/${type}?api_key=${k}&query=${encodeURIComponent(f.title)}&${yearP}&language=es-ES`).then(r=>r.json())
+      const result  = res.results?.[0]
+      if (!result) return
+
+      // Poster
+      if (!f.poster_url && result.poster_path) {
+        const poster = `${TMDB_IMG}${result.poster_path}`
+        f.poster_url = poster
+        localStorage.setItem(`poster:${f.tmdb_id}`, poster)
+        const hero = document.querySelector(`[data-film-id="${f.tmdb_id}"] img, .detail-hero img`)
+        if (hero) hero.src = poster
+      }
+
+      // Score
+      if (result.vote_average) {
+        localStorage.setItem(`score:${f.tmdb_id}`, result.vote_average)
+        const el = document.querySelector('.metric-val')
+        if (el && el.textContent === '—') el.textContent = result.vote_average.toFixed(1)
+      }
+
+      // Synopsis
+      if (!f.editorial_text && result.overview) {
+        f.synopsis_es = result.overview
+        const block = document.querySelector('.editorial-text')
+        if (!block) {
+          const body = document.querySelector('.detail-body .detail-metrics')
+          if (body) body.insertAdjacentHTML('afterend', `
+            <div class="editorial-block">
+              <div class="editorial-label">SINOPSIS</div>
+              <div class="editorial-text">${result.overview}</div>
+            </div>`)
+        }
+      }
+
+      // Runtime
+      const detail = await fetch(`${TMDB_BASE}/${type}/${result.id}?api_key=${k}&language=es-ES`).then(r=>r.json())
+      const rt = detail.runtime || detail.episode_run_time?.[0]
+      if (rt) {
+        const el = document.getElementById('detail-runtime')
+        if (el) el.textContent = this.fmtRuntime(rt)
+      }
+    } catch {}
+  },
+
+  async syncCounts() {
+    try {
+      const d = await fetch(`${API_BASE}/api/counts`).then(r=>r.json())
+      if (!d.counts) return
+      for (const row of d.counts) {
+        const film = ALL_FILMS.find(f=>f.title===row.title)
+        if (film) film.return_count = Math.max(film.return_count, row.count)
+      }
+      // Re-render rank numbers in place
+      document.querySelectorAll('.rank-count').forEach(el => {
+        const item = el.closest('[data-film-id]')
+        if (!item) return
+        const id  = parseInt(item.dataset.filmId)
+        const film = ALL_FILMS.find(f=>f.tmdb_id===id)
+        if (film) el.textContent = this.fmt(film.return_count)
+      })
     } catch {}
   },
 
   async doReturn(e, id) {
     e.stopPropagation()
     const btn = document.getElementById(`btn-ret-${id}`)
-    if (!btn || btn.classList.contains('pressed')) return
+    if (!btn||btn.classList.contains('pressed')) return
     btn.classList.add('pressed'); btn.textContent = '✓ REGISTRADO'
+    const film = ALL_FILMS.find(f=>f.tmdb_id===id)
+    if (!film) return
+    film.return_count++
+    localStorage.setItem(`ret:${id}`, film.return_count)
+    const num = document.getElementById(`ret-num-${id}`)
+    if (num) num.textContent = this.fmt(film.return_count)
+    this.toast(`↩ ${this.fmt(film.return_count)} personas volvieron a verla.`)
+    // Persistir en Neon
     try {
-      const d = await fetch(`${API}/films/${id}/return`, {method:'POST'}).then(r => r.json())
-      const num = document.getElementById(`ret-num-${id}`)
-      if (num) num.textContent = this.fmt(d.return_count)
-      this.toast(d.message || '↩ Registrado')
-    } catch { this.toast('↩ Registrado') }
+      const d = await fetch(`${API_BASE}/api/return`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tmdb_id: id, title: film.title })
+      }).then(r=>r.json())
+      if (d.count) {
+        film.return_count = d.count
+        if (num) num.textContent = this.fmt(d.count)
+      }
+    } catch {}
   },
 
   shareFilm() {
@@ -1310,7 +1665,6 @@ const App = {
   },
 
   // ── Search ──────────────────────────────────────────────────────────────
-
   initSearch() {
     const inp = document.getElementById('search-input')
     const clr = document.getElementById('search-clear')
@@ -1320,35 +1674,30 @@ const App = {
       const q = inp.value.trim()
       clr.style.display = q ? 'block' : 'none'
       if (!q) { this.closeSearch(); return }
-      timer = setTimeout(() => this.doSearch(q), 280)
+      timer = setTimeout(() => this.doSearch(q), 250)
     })
     inp.addEventListener('keydown', e => { if (e.key==='Escape') this.clearSearch() })
   },
 
-  async doSearch(q) {
+  doSearch(q) {
     const box = document.getElementById('search-results')
     box.classList.add('open')
-    box.innerHTML = `<div class="search-empty">BUSCANDO...</div>`
-    try {
-      const d = await fetch(`${API}/search?q=${encodeURIComponent(q)}&country=${this.s.country}`).then(r => r.json())
-      const films = d.films || []
-      if (!films.length) {
-        box.innerHTML = `<div class="search-empty">SIN RESULTADOS PARA "${q.toUpperCase()}"</div>`
-        return
-      }
-      box.innerHTML = films.map(f => `
-        <div class="search-item" onclick="App.openFilm(${f.tmdb_id});App.clearSearch()">
-          <div class="search-item-thumb">
-            ${f.poster_url ? `<img src="${f.poster_url}" alt="${f.title}" loading="lazy">` : '🎬'}
-          </div>
-          <div>
-            <div class="search-item-title">${f.title}</div>
-            <div class="search-item-meta">${f.year} · ${GENRES[f.ancla_genre]||''} · ${f.type==='series'?'SERIE':'FILM'}</div>
-          </div>
-        </div>`).join('')
-    } catch {
-      box.innerHTML = `<div class="search-empty">ERROR AL BUSCAR</div>`
+    const ql = q.toLowerCase()
+    const results = ALL_FILMS.filter(f => f.title.toLowerCase().includes(ql)).slice(0,8)
+    if (!results.length) {
+      box.innerHTML = `<div class="search-empty">SIN RESULTADOS PARA "${q.toUpperCase()}"</div>`
+      return
     }
+    box.innerHTML = results.map(f=>`
+      <div class="search-item" onclick="App.openFilm(${f.tmdb_id});App.clearSearch()">
+        <div class="search-item-thumb">
+          ${f.poster_url?`<img src="${f.poster_url}" alt="${f.title}" loading="lazy">`:'🎬'}
+        </div>
+        <div>
+          <div class="search-item-title">${f.title}</div>
+          <div class="search-item-meta">${f.year} · ${GENRES[f.ancla_genre]||''} · ${f.type==='series'?'SERIE':'FILM'}</div>
+        </div>
+      </div>`).join('')
   },
 
   clearSearch() {
@@ -1363,7 +1712,6 @@ const App = {
   },
 
   // ── Lista ───────────────────────────────────────────────────────────────
-
   renderLista() {
     const list = this.s.list
     const cont = document.getElementById('lista-content')
@@ -1379,54 +1727,42 @@ const App = {
     }
     cont.innerHTML = `
       <div class="kpi-row">
-        <div class="kpi-box">
-          <span class="kpi-n">${list.length}</span>
-          <span class="kpi-l">Guardadas</span>
-        </div>
-        <div class="kpi-box">
-          <span class="kpi-n">${list.filter(l=>l.w==='+').length}</span>
-          <span class="kpi-l">Pendientes</span>
-        </div>
-        <div class="kpi-box">
-          <span class="kpi-n">${list.filter(l=>l.w==='-').length}</span>
-          <span class="kpi-l">Ya vi</span>
-        </div>
+        <div class="kpi-box"><span class="kpi-n">${list.length}</span><span class="kpi-l">Guardadas</span></div>
+        <div class="kpi-box"><span class="kpi-n">${list.filter(l=>l.w==='+').length}</span><span class="kpi-l">Pendientes</span></div>
+        <div class="kpi-box"><span class="kpi-n">${list.filter(l=>l.w==='-').length}</span><span class="kpi-l">Ya vi</span></div>
       </div>
-      ${list.map(item => `
+      ${list.map(item=>`
         <div class="lista-item">
           <div class="lista-title">${item.title}</div>
-          <button class="weight-btn ${item.w==='-'?'on-minus':''}"
-            onclick="App.setW(${item.id},'-')">−</button>
-          <button class="weight-btn ${item.w==='+'?'on-plus':''}"
-            onclick="App.setW(${item.id},'+')">+</button>
+          <button class="weight-btn ${item.w==='-'?'on-minus':''}" onclick="App.setW(${item.id},'-')">−</button>
+          <button class="weight-btn ${item.w==='+'?'on-plus':''}" onclick="App.setW(${item.id},'+')">+</button>
         </div>`).join('')}`
   },
 
   toggleList(id, title) {
-    const idx = this.s.list.findIndex(l => l.id === id)
+    const idx = this.s.list.findIndex(l=>l.id===id)
     const btn = document.getElementById(`btn-save-${id}`)
-    if (idx >= 0) {
-      this.s.list.splice(idx, 1)
-      if (btn) { btn.classList.remove('saved'); btn.textContent = '+ GUARDAR EN MI LISTA' }
+    if (idx>=0) {
+      this.s.list.splice(idx,1)
+      if (btn) { btn.classList.remove('saved'); btn.textContent='+ GUARDAR EN MI LISTA' }
       this.toast('Eliminado de tu lista')
     } else {
-      this.s.list.push({ id, title, w: null, t: Date.now() })
-      if (btn) { btn.classList.add('saved'); btn.textContent = '✓ EN TU LISTA' }
+      this.s.list.push({ id, title, w:null, t:Date.now() })
+      if (btn) { btn.classList.add('saved'); btn.textContent='✓ EN TU LISTA' }
       this.toast('✓ Guardado en tu lista')
     }
     localStorage.setItem('ancla_list', JSON.stringify(this.s.list))
   },
 
   setW(id, w) {
-    const item = this.s.list.find(l => l.id === id)
+    const item = this.s.list.find(l=>l.id===id)
     if (!item) return
-    item.w = item.w === w ? null : w
+    item.w = item.w===w ? null : w
     localStorage.setItem('ancla_list', JSON.stringify(this.s.list))
     this.renderLista()
   },
 
   // ── Country ─────────────────────────────────────────────────────────────
-
   openCountry()  { document.getElementById('country-modal').classList.add('open') },
   closeCountry() { document.getElementById('country-modal').classList.remove('open') },
   setCountry(c) {
@@ -1437,21 +1773,24 @@ const App = {
   },
 
   // ── Auth ────────────────────────────────────────────────────────────────
-
   authTab(mode, el) {
-    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'))
+    document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'))
     el.classList.add('active')
     const btn = document.querySelector('.auth-submit')
-    if (btn) btn.textContent = mode === 'login' ? 'ENTRAR' : 'CREAR CUENTA'
+    if (btn) btn.textContent = mode==='login'?'ENTRAR':'CREAR CUENTA'
   },
-  authSubmit()     { this.toast('Próximamente — tu lista se guarda en este dispositivo') },
-  socialAuth(p)    { this.toast('Próximamente — tu lista se guarda en este dispositivo') },
+  authSubmit()  { this.toast('Próximamente — tu lista se guarda en este dispositivo') },
+  socialAuth(p) { this.toast('Próximamente — tu lista se guarda en este dispositivo') },
 
   // ── Utils ───────────────────────────────────────────────────────────────
-
   fmt(n) {
     if (!n) return '0'
-    return n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'K' : String(n)
+    return n>=1000 ? (n/1000).toFixed(1).replace('.0','')+'K' : String(n)
+  },
+  fmtRuntime(min) {
+    if (!min) return '—'
+    const h = Math.floor(min/60), m = min%60
+    return h ? `${h}h${m>0?' '+m+'m':''}` : `${m}m`
   },
   jw(title) {
     return `https://www.justwatch.com/co/buscar?q=${encodeURIComponent(title)}`
@@ -1460,7 +1799,7 @@ const App = {
     const el = document.getElementById('toast')
     el.textContent = msg; el.classList.add('show')
     clearTimeout(this._t)
-    this._t = setTimeout(() => el.classList.remove('show'), 2800)
+    this._t = setTimeout(()=>el.classList.remove('show'), 2800)
   },
 }
 
@@ -1469,5 +1808,6 @@ document.addEventListener('DOMContentLoaded', () => {
   App.loadSplashStats()
 })
 </script>
+
 </body>
 </html>
