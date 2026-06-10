@@ -1,0 +1,15 @@
+{
+  "name": "kimify-motor",
+  "version": "2.0.0",
+  "description": "KIMIFY MOTOR v2.0 — Midjourney V8.1 Prompt Generator for Superhero Anime",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["midjourney", "prompt-generator", "anime", "superhero"],
+  "license": "MIT"
+}
