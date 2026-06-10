@@ -78,12 +78,18 @@ header{
 /* ── CONTROLS ── */
 .ctrl-col{display:flex;flex-direction:column;gap:1.1rem}
 .mode-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+.mode-grid-premium{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.5rem}
+.mode-sep{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:.6rem 0 .2rem;padding-left:.1rem;opacity:.7}
 .mbtn{
   background:rgba(255,255,255,.025);border:1px solid var(--card-b);
   border-radius:10px;padding:.7rem;cursor:pointer;transition:all var(--tr);text-align:center
 }
 .mbtn:hover{background:var(--hover);border-color:rgba(233,69,96,.4)}
 .mbtn.on{background:rgba(233,69,96,.14);border-color:var(--accent)}
+.mbtn.premium{border-color:rgba(180,100,255,.25)}
+.mbtn.premium:hover{border-color:rgba(180,100,255,.6)}
+.mbtn.premium.on{background:rgba(180,100,255,.14);border-color:#b464ff}
+.mbtn.premium.on .mname{color:#c87aff}
 .micon{font-size:1.4rem;margin-bottom:.2rem}
 .mname{font-size:.78rem;font-weight:800;letter-spacing:.04em}
 .mdesc{font-size:.62rem;color:var(--muted);margin-top:.1rem}
@@ -181,6 +187,7 @@ header{
     <div style="font-size:.7rem;color:var(--muted)">Midjourney V8.1 &bull; Superhero Anime Prompts</div>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+    <span style="font-size:.65rem;padding:.2rem .65rem;border-radius:20px;background:rgba(233,69,96,.18);color:#e94560;font-weight:700" id="modeBadge">ANIME</span>
     <span style="font-size:.7rem;color:var(--muted)">History: <strong id="hCount">0</strong></span>
     <button class="btn btn-ok" id="exportBtn" style="font-size:.72rem;padding:.38rem .85rem">&#11015; Export All</button>
   </div>
@@ -205,11 +212,18 @@ header{
   <div class="ctrl-col">
     <div class="glass">
       <div class="sec-label">Style Mode</div>
+      <div class="mode-sep">&#x25B6; Base Styles</div>
       <div class="mode-grid">
         <button class="mbtn on" data-mode="ANIME"><div class="micon">&#127912;</div><div class="mname">ANIME</div><div class="mdesc">Clean painterly, cel-shaded</div></button>
         <button class="mbtn" data-mode="PHOTO"><div class="micon">&#128247;</div><div class="mname">PHOTO</div><div class="mdesc">Hyperrealistic, film grain</div></button>
         <button class="mbtn" data-mode="SHONEN"><div class="micon">&#9889;</div><div class="mname">SHONEN</div><div class="mdesc">Dynamic, speed lines</div></button>
         <button class="mbtn" data-mode="NEURAL"><div class="micon">&#129504;</div><div class="mname">NEURAL</div><div class="mdesc">Neural hyperrealistic, IMAX</div></button>
+      </div>
+      <div class="mode-sep">&#x2728; Premium Styles</div>
+      <div class="mode-grid-premium">
+        <button class="mbtn premium" data-mode="DARKPRO"><div class="micon">&#127769;</div><div class="mname">DARK PRO</div><div class="mdesc">Noir anime, moody cinematic</div></button>
+        <button class="mbtn premium" data-mode="CGI3D"><div class="micon">&#128187;</div><div class="mname">CGI 3D</div><div class="mdesc">Unreal Engine, ray tracing</div></button>
+        <button class="mbtn premium" data-mode="PVCRESIN"><div class="micon">&#127942;</div><div class="mname">PVC RESIN</div><div class="mdesc">Collectible figure, resin art</div></button>
       </div>
     </div>
 
@@ -369,10 +383,41 @@ const CHARS=[
 
 // ══════════════════ PROMPT ENGINE ══════════════════
 const MODES={
-  ANIME:{pre:"high-end anime illustration, clean painterly style, cel-shaded hybrid technique",skin:"smooth luminous anime skin, soft color gradients, clean highlights",suf:"crisp anime line work, vibrant color palette, professional anime key visual"},
-  PHOTO:{pre:"hyperrealistic professional photography, 8K resolution, film grain, bokeh",skin:"photorealistic skin texture, natural pores, subsurface scattering",suf:"shot on RED Helium 8K camera, professional photography, Hasselblad quality"},
-  SHONEN:{pre:"shonen manga illustration, exaggerated dynamic proportions, bold ink lines",skin:"manga halftone texture, bold ink contours, dramatic speedlines",suf:"manga panel composition, impact frames, screentone shading, jump magazine style"},
-  NEURAL:{pre:"neural hyperrealistic synthesis, impossible microscopic detail, IMAX quality render",skin:"photorealistic skin with quantum-level detail, every pore perfect, subsurface glow",suf:"neural network art synthesis, impossible fidelity, ultra-high definition masterpiece"}
+  ANIME:{
+    pre:"high-end anime illustration, clean painterly style, cel-shaded hybrid technique",
+    skin:"smooth luminous anime skin, soft color gradients, clean highlights",
+    suf:"crisp anime line work, vibrant color palette, professional anime key visual"
+  },
+  PHOTO:{
+    pre:"hyperrealistic professional photography, 8K resolution, film grain, bokeh",
+    skin:"photorealistic skin texture, natural pores, subsurface scattering",
+    suf:"shot on RED Helium 8K camera, professional photography, Hasselblad quality"
+  },
+  SHONEN:{
+    pre:"shonen manga illustration, exaggerated dynamic proportions, bold ink lines",
+    skin:"manga halftone texture, bold ink contours, dramatic speedlines",
+    suf:"manga panel composition, impact frames, screentone shading, jump magazine style"
+  },
+  NEURAL:{
+    pre:"neural hyperrealistic synthesis, impossible microscopic detail, IMAX quality render",
+    skin:"photorealistic skin with quantum-level detail, every pore perfect, subsurface glow",
+    suf:"neural network art synthesis, impossible fidelity, ultra-high definition masterpiece"
+  },
+  DARKPRO:{
+    pre:"dark atmospheric anime illustration, deep noir aesthetic, cinematic shadow play, high contrast moody anime, black palette dominance, dramatic chiaroscuro",
+    skin:"deep shadow gradients on skin, chiaroscuro anime shading, glowing highlights against darkness, dramatic rimlight on skin contours",
+    suf:"dark anime masterpiece, noir atmosphere, velvet deep blacks, sharp neon accent highlights, midnight cinematic feel, professional dark illustration, --v 8.1"
+  },
+  CGI3D:{
+    pre:"photorealistic CGI 3D render, Unreal Engine 5 Lumen quality, real-time ray tracing, AAA game cinematic render, digital human technology",
+    skin:"subsurface scattering skin shader, micro-detail skin pores, translucent skin layers, realistic melanin gradients, 3D rendered hyper-texture",
+    suf:"Octane Render quality, V-Ray photorealism, 3D studio cinematic lighting, AAA cutscene quality, Epic Games MetaHuman level of detail, 8K texture maps"
+  },
+  PVCRESIN:{
+    pre:"high-end PVC anime figure photography, premium resin statue collectible, 1/6 scale figurine masterpiece, hand-painted collector art figure",
+    skin:"painted resin surface texture, figure material gloss finish, hand-painted anime detail, acrylic paint on figure, matte and gloss finish combination",
+    suf:"Good Smile Company figure quality, Kotobukiya premium statue, figure photography on white seamless background, studio product photography, collector edition"
+  }
 };
 const ML={
   1:{t:"athletic defined physique, soft visible abs, toned feminine curves",b:"Athletic",bg:"rgba(100,200,100,.2)",c:"#64c864"},
@@ -381,7 +426,15 @@ const ML={
   4:{t:"extreme muscular definition, 8-pack rectus abdominis, vascular arms, bodybuilder-feminine",b:"Extreme",bg:"rgba(255,150,50,.2)",c:"#ff9632"},
   5:{t:"brutal shredded physique, every muscle group hyper-visible, hardcore feminine bodybuilder",b:"Brutal",bg:"rgba(200,50,50,.2)",c:"#ff4444"}
 };
-const NEG="--no cartoon, 3D render, CGI, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, chibi, childlike, text, watermark, UI elements, oversaturated, grayscale";
+const NEG={
+  ANIME:"--no 3D render, CGI, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, chibi, childlike, text, watermark, UI elements, grayscale",
+  PHOTO:"--no cartoon, anime, painting, illustration, bad anatomy, extra fingers, deformed, blurry, low quality, text, watermark, CGI, oversaturated",
+  SHONEN:"--no realistic, 3D render, CGI, bad anatomy, extra fingers, deformed, blurry, low quality, chibi, text, watermark, western cartoon",
+  NEURAL:"--no cartoon, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, chibi, text, watermark, low resolution, artifacts",
+  DARKPRO:"--no bright colors, oversaturated, clean background, flat lighting, chibi, low quality, bad anatomy, extra fingers, deformed hands, masculine features, text, watermark",
+  CGI3D:"--no 2D illustration, anime flat colors, painted, hand-drawn, cartoon, bad anatomy, extra fingers, deformed, low poly, blurry, text, watermark, low quality",
+  PVCRESIN:"--no background clutter, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, soft sculpture, clay appearance, text, watermark, painted background, gradient background"
+};
 
 function mkPrompt(char,ov){
   if(!char)return"Select a character to generate a prompt…";
@@ -390,7 +443,12 @@ function mkPrompt(char,ov){
         pose=ov.pose||S.pose,cloth=ov.cloth||S.cloth,
         bg=ov.bg||S.bg,light=ov.light||S.light;
   const M=MODES[mode],L=ML[ml];
-  return M.pre+", "+char.p+", "+L.t+", "+M.skin+", wearing "+cloth+", "+char.e+" emblem detail, "+pose+" pose, confident expression, dynamic angle, "+light+", "+bg+", "+M.suf+", dominant colors: "+char.c.join(", ")+", --ar 9:16 --style raw --v 8.1 "+NEG;
+  const neg=NEG[mode]||NEG.ANIME;
+  // PVC Resin overrides: figure-specific background/lighting
+  const finalBg=(mode==="PVCRESIN")?"white seamless studio background, product photography setup":bg;
+  const finalLight=(mode==="PVCRESIN")?"soft box studio lighting, even diffused light, no harsh shadows":light;
+  const ar=(mode==="PVCRESIN")?"--ar 2:3":"--ar 9:16";
+  return M.pre+", "+char.p+", "+L.t+", "+M.skin+", wearing "+cloth+", "+char.e+" emblem detail, "+pose+" pose, confident expression, dynamic angle, "+finalLight+", "+finalBg+", "+M.suf+", dominant colors: "+char.c.join(", ")+", "+ar+" --style raw --v 8.1 "+neg;
 }
 
 const VPOSES=["standing heroic","dynamic action crouching","walking forward confident","power stance arms raised","mid-air action leap flying"];
@@ -531,6 +589,14 @@ document.addEventListener("DOMContentLoaded",function(){
     b.addEventListener("click",function(){
       document.querySelectorAll(".mbtn").forEach(function(x){x.classList.remove("on");});
       b.classList.add("on");S.mode=b.dataset.mode;
+      // Update header mode badge
+      var badge=document.getElementById("modeBadge");
+      if(badge){
+        var isPremium=b.classList.contains("premium");
+        badge.textContent=b.querySelector(".mname").textContent;
+        badge.style.background=isPremium?"rgba(180,100,255,.18)":"rgba(233,69,96,.18)";
+        badge.style.color=isPremium?"#c87aff":"#e94560";
+      }
       if(S.char)setInstant(mkPrompt(S.char));
     });
   });
