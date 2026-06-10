@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: kimify-motor
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    healthCheckPath: /health
