@@ -102,6 +102,10 @@ header{
 }
 .sec-h::before{content:'';width:2px;height:9px;background:var(--acc);border-radius:1px}
 .sec-h.p::before{background:var(--pur)}
+.sec-h.gold::before{background:#f0a030}
+.srow.sig.on{background:rgba(240,160,48,.08);border-color:rgba(240,160,48,.4)}
+.srow.sig.on .sdot{background:#f0a030}
+.pill-mode.gold{background:rgba(240,160,48,.12);border-color:rgba(240,160,48,.35);color:#f0a030}
 .sdiv{height:1px;background:var(--br);margin:14px 0}
 
 /* style rows */
@@ -285,6 +289,16 @@ header{
           <div class="srow" data-mode="CGI3D"><div class="sdot"></div><div class="sname">CGI 3D</div><div class="sdesc">UE5 ray tracing &middot; Octane</div></div>
           <div class="srow" data-mode="PVCRESIN"><div class="sdot"></div><div class="sname">PVC RESIN</div><div class="sdesc">Collectible figure &middot; vinyl gloss</div></div>
           <div class="srow" data-mode="GYBLY"><div class="sdot"></div><div class="sname">GYBLY</div><div class="sdesc">Anime face &middot; photo body</div></div>
+        </div>
+      </div>
+      <div class="sdiv"></div>
+      <div class="sec">
+        <div class="sec-h gold">&#9733; Kimify Signature</div>
+        <div id="sigList">
+          <div class="srow sig" data-mode="PAINTERLY"><div class="sdot"></div><div class="sname">PAINTERLY</div><div class="sdesc">Semi-realistic &middot; oil digital</div></div>
+          <div class="srow sig" data-mode="SCULPTED"><div class="sdot"></div><div class="sname">SCULPTED</div><div class="sdesc">Anatomy render &middot; 3D volume</div></div>
+          <div class="srow sig" data-mode="CELSHADE"><div class="sdot"></div><div class="sname">PREMIUM CEL</div><div class="sdesc">Flat shadows &middot; sharp lineart</div></div>
+          <div class="srow sig" data-mode="WEBTOON"><div class="sdot"></div><div class="sname">WEBTOON</div><div class="sdesc">Pixiv &middot; Korean manhwa</div></div>
         </div>
       </div>
       <div class="sdiv"></div>
@@ -557,6 +571,27 @@ var MODES={
     pre:"IMAX cinematic anime, theatrical film composition with anime stylization, movie-quality animation",
     skin:"cinematic lighting on anime skin, film grain texture over anime style, theatrical color grading",
     suf:"cinematic anime masterpiece, IMAX film quality, theatrical release animation standard"
+  },
+  // ── KIMIFY SIGNATURE STYLES ──
+  PAINTERLY:{
+    pre:"semi-realistic anime painterly render, digital oil painting technique, anime realism hybrid with visible brushstroke texture in hair and fabric folds",
+    skin:"soft realism skin with controlled subsurface scattering, medium contrast gradients, glossy digital oil paint finish, stylized anatomy with natural proportions",
+    suf:"painterly digital masterpiece, glossy material render, soft diffused shadow gradients, Niji RAW hybrid quality, Pixiv realism illustration standard"
+  },
+  SCULPTED:{
+    pre:"anime sculpted anatomy render, hyper-defined muscle character concept art, anime realism fused with 3D sculpt volume and studio lighting",
+    skin:"studio-lit anatomy shading, sculpted definition on skin surface, clean minimal-noise render with strong volumetric feeling, near-3D sculptural quality",
+    suf:"heroine physique concept art render, ultra-defined anatomy studio quality, sculpted abs obliques and deltoids visible, clean AAA character concept standard"
+  },
+  CELSHADE:{
+    pre:"premium cel-shaded anime illustration, sharp confident lineart, flat color shadow technique, high-contrast commercial anime production quality",
+    skin:"cel-shaded skin with flat color blocks, controlled specular highlights single light source, sharp shadow plane edges, absolute black ink contours",
+    suf:"Bleach Cyberpunk Edgerunners Ghost-in-the-Shell Evangelion aesthetic, studio anime production art quality, sharp cel animation style, clean hard shadow planes"
+  },
+  WEBTOON:{
+    pre:"Korean webtoon manhwa illustration style, Pixiv top-artist character art quality, clean line digital illustration with soft anime rendering",
+    skin:"very smooth pore-free skin texture, soft rendering with minimal texture, clean complexion, delicate color gradients, detail in eyes and hair",
+    suf:"Pixiv top illustration quality, Korean manhwa aesthetic, fine confident lineart, soft balanced color palette, character focus with minimal background detail"
   }
 };
 
@@ -583,7 +618,11 @@ var QUALITY_DESC={
   F_GYBDARK:"anatomically accurate under noir lighting, mature adult figure",
   F_ANIMERESIN:"accurate figure proportions, professional collectible standard",
   F_NEURALPVC:"perfect figure geometry, professional collector quality",
-  F_CINEANIME:"cinematically accurate proportions, theatrical quality animation"
+  F_CINEANIME:"cinematically accurate proportions, theatrical quality animation",
+  PAINTERLY:"semi-realistic hybrid quality, stylized yet anatomically plausible, adult mature character, painterly professional illustration standard",
+  SCULPTED:"anatomically hyper-defined adult character, sculpted physique accuracy, professional concept art standard, mature heroine figure",
+  CELSHADE:"adult character cel-shaded, clean anatomical lineart, professional studio anime standard, mature proportions",
+  WEBTOON:"clean anatomically accurate character, adult mature proportions, professional manhwa illustration standard"
 };
 
 // ══════════════════════════════════════════════════════
@@ -784,10 +823,11 @@ function toast(msg){
 // ══════════════════════════════════════════════════════
 // MODE PILL
 // ══════════════════════════════════════════════════════
-function updateModePill(mode,isFusion){
+function updateModePill(mode,isFusion,isSig){
   var pill=document.getElementById("modePill");
   pill.textContent=mode.replace("F_","").replace("FUSION_","");
   if(isFusion){pill.className="pill pill-mode pur";}
+  else if(isSig){pill.className="pill pill-mode gold";}
   else{pill.className="pill pill-mode";}
 }
 
@@ -826,7 +866,8 @@ document.addEventListener("DOMContentLoaded",function(){
       r.classList.add("on");
       S.mode=r.dataset.mode;
       var isFusion=r.classList.contains("fusion");
-      updateModePill(S.mode,isFusion);
+      var isSig=r.classList.contains("sig");
+      updateModePill(S.mode,isFusion,isSig);
       if(S.char)setInstant();
     });
   });
