@@ -3,473 +3,657 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KIMIFY MOTOR v2.0 — Midjourney Prompt Generator</title>
+<title>KIMIFY MOTOR v3.0</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0f;--card:#1a1a2e;--card-b:#2a2a40;--hover:#252540;
-  --accent:#e94560;--text:#ffffff;--muted:#a0a0b0;--ok:#00d9a5;--tr:0.2s ease-out
+  --bg:#07070f;--s1:#0c0c1a;--s2:#101020;--s3:#151530;
+  --br:#1a1a32;--br2:#2a2a50;
+  --acc:#e94560;--pur:#7c5cfc;--ok:#00c896;
+  --t1:#eeeef8;--t2:#6868a0;--t3:#2e2e50;
+  --r:.18s ease
 }
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
-button{font-family:inherit;cursor:pointer;border:none;outline:none}
+body{background:var(--bg);color:var(--t1);font-family:-apple-system,'Segoe UI',sans-serif;font-size:13px;line-height:1.5;height:100vh;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--br2);border-radius:2px}
+
+/* ── APP SHELL ── */
+.app{display:grid;grid-template-rows:44px 1fr;height:100vh}
+.body{display:grid;grid-template-columns:252px 1fr 356px;overflow:hidden;height:100%}
+
 /* ── HEADER ── */
 header{
-  background:rgba(26,26,46,.95);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--card-b);padding:.85rem 1.5rem;
-  position:sticky;top:0;z-index:200;
-  display:flex;align-items:center;justify-content:space-between;gap:1rem
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;border-bottom:1px solid var(--br);background:var(--s1);
+  gap:12px
 }
-.logo{font-size:1.35rem;font-weight:900;letter-spacing:.08em;white-space:nowrap}
-.logo em{color:var(--accent);font-style:normal}
-.logo sup{font-size:.55rem;color:var(--muted);font-weight:400;vertical-align:super;margin-left:.2rem}
-/* ── GRID ── */
-.layout{
-  display:grid;grid-template-columns:290px 1fr 370px;
-  gap:1.25rem;padding:1.25rem;max-width:1700px;margin:0 auto
+.logo{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--t1)}
+.logo span{color:var(--acc)}
+.hpills{display:flex;align-items:center;gap:8px}
+.pill{
+  padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
+  letter-spacing:.06em;border:1px solid;
 }
-@media(max-width:1280px){.layout{grid-template-columns:270px 1fr}.output-col{grid-column:1/-1}}
-@media(max-width:768px){.layout{grid-template-columns:1fr;padding:.75rem}}
-/* ── CARD ── */
-.glass{
-  background:rgba(26,26,46,.65);backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.25rem
+.pill-mode{background:rgba(233,69,96,.12);border-color:rgba(233,69,96,.3);color:var(--acc)}
+.pill-mode.pur{background:rgba(124,92,252,.12);border-color:rgba(124,92,252,.3);color:var(--pur)}
+.pill-cnt{background:var(--s2);border-color:var(--br);color:var(--t2)}
+.hbtn{
+  padding:4px 11px;border-radius:5px;font-size:11px;font-weight:600;
+  background:var(--s2);border:1px solid var(--br);color:var(--t2);
+  transition:all var(--r)
 }
-.sec-label{
-  font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:.9rem;
-  display:flex;align-items:center;gap:.45rem
-}
-.sec-label::before{content:'';width:3px;height:13px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.hbtn:hover{border-color:var(--br2);color:var(--t1)}
+
 /* ── SIDEBAR ── */
-.sidebar-inner{height:calc(100vh - 110px);overflow:hidden;display:flex;flex-direction:column;gap:.7rem}
-.search-input{
-  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--card-b);
-  border-radius:8px;padding:.55rem .9rem;color:var(--text);font-size:.85rem;outline:none;
-  transition:border-color var(--tr)
+.sb{display:flex;flex-direction:column;border-right:1px solid var(--br);background:var(--s1);overflow:hidden}
+.sb-top{padding:10px;border-bottom:1px solid var(--br);flex-shrink:0}
+.sb-input{
+  width:100%;background:var(--s2);border:1px solid var(--br);
+  border-radius:5px;padding:6px 10px;color:var(--t1);font-size:11px;
+  outline:none;transition:border-color var(--r)
 }
-.search-input:focus{border-color:var(--accent)}
-.search-input::placeholder{color:var(--muted)}
-.ftabs{display:flex;gap:.4rem;flex-wrap:wrap}
+.sb-input:focus{border-color:var(--br2)}
+.sb-input::placeholder{color:var(--t3)}
+.ftabs{display:flex;gap:3px;margin-top:7px}
 .ftab{
-  background:transparent;border:1px solid var(--card-b);border-radius:20px;
-  padding:.22rem .7rem;color:var(--muted);font-size:.72rem;transition:all var(--tr)
+  padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--t3);
+  border:1px solid transparent;transition:all var(--r)
 }
-.ftab.on,.ftab:hover{background:var(--accent);border-color:var(--accent);color:#fff}
-.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:.45rem;overflow-y:auto;padding-right:.2rem;flex:1}
-.char-grid::-webkit-scrollbar{width:3px}
-.char-grid::-webkit-scrollbar-thumb{background:var(--card-b);border-radius:2px}
-.ccard{
-  background:rgba(255,255,255,.025);border:1px solid var(--card-b);
-  border-radius:10px;padding:.65rem .45rem;text-align:center;
-  cursor:pointer;transition:all var(--tr);position:relative
+.ftab.on,.ftab:hover{background:var(--s3);border-color:var(--br2);color:var(--t1)}
+.sb-list{flex:1;overflow-y:auto;padding:4px}
+.ci{
+  display:flex;align-items:center;gap:7px;padding:6px 8px;
+  border-radius:5px;cursor:pointer;transition:all var(--r);
+  border:1px solid transparent
 }
-.ccard:hover{background:var(--hover);border-color:rgba(233,69,96,.4);transform:translateY(-2px)}
-.ccard.sel{background:rgba(233,69,96,.14);border-color:var(--accent)}
-.cavatar{
-  width:46px;height:46px;border-radius:50%;margin:0 auto .45rem;
-  display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800
+.ci:hover{background:var(--s2)}
+.ci.on{background:var(--s3);border-color:rgba(233,69,96,.25)}
+.cav{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800
 }
-.cname{font-size:.68rem;font-weight:700;line-height:1.2}
-.csub{font-size:.58rem;color:var(--muted);margin-top:.15rem}
-.cbadge{position:absolute;top:3px;right:3px;font-size:.52rem;padding:1px 4px;border-radius:3px;font-weight:700}
-.bDC{background:rgba(40,100,255,.18);color:#6090ff}
-.bMarvel{background:rgba(255,30,30,.18);color:#ff6666}
-.bAnime{background:rgba(233,69,96,.18);color:var(--accent)}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:11px;font-weight:600;line-height:1.2}
+.ci-sub{font-size:10px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ubadge{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;flex-shrink:0}
+.uDC{background:rgba(60,120,255,.15);color:#6090ff}
+.uMarvel{background:rgba(255,40,40,.15);color:#ff6060}
+.uAnime{background:rgba(233,69,96,.15);color:var(--acc)}
+
 /* ── CONTROLS ── */
-.ctrl-col{display:flex;flex-direction:column;gap:1.1rem}
-.mode-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
-.mode-grid-premium{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.5rem}
-.mode-sep{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:.6rem 0 .2rem;padding-left:.1rem;opacity:.7}
-.mbtn{
-  background:rgba(255,255,255,.025);border:1px solid var(--card-b);
-  border-radius:10px;padding:.7rem;cursor:pointer;transition:all var(--tr);text-align:center
+.ctrl{display:flex;flex-direction:column;border-right:1px solid var(--br);overflow:hidden}
+.tbar{display:flex;border-bottom:1px solid var(--br);background:var(--s1);flex-shrink:0}
+.tbtn{
+  padding:11px 16px;font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:var(--t2);border-bottom:2px solid transparent;transition:all var(--r)
 }
-.mbtn:hover{background:var(--hover);border-color:rgba(233,69,96,.4)}
-.mbtn.on{background:rgba(233,69,96,.14);border-color:var(--accent)}
-.mbtn.premium{border-color:rgba(180,100,255,.25)}
-.mbtn.premium:hover{border-color:rgba(180,100,255,.6)}
-.mbtn.premium.on{background:rgba(180,100,255,.14);border-color:#b464ff}
-.mbtn.premium.on .mname{color:#c87aff}
-.micon{font-size:1.4rem;margin-bottom:.2rem}
-.mname{font-size:.78rem;font-weight:800;letter-spacing:.04em}
-.mdesc{font-size:.62rem;color:var(--muted);margin-top:.1rem}
-.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
-.mbadge{padding:.18rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700;transition:all var(--tr)}
-.mslider{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;outline:none;cursor:pointer}
-.mslider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
-  background:var(--accent);cursor:pointer;box-shadow:0 0 10px rgba(233,69,96,.5);transition:transform var(--tr)
+.tbtn:hover{color:var(--t1)}
+.tbtn.on{color:var(--t1);border-bottom-color:var(--acc)}
+.tpanel{display:none;flex:1;overflow-y:auto;padding:14px}
+.tpanel.on{display:block}
+.sec{margin-bottom:18px}
+.sec-h{
+  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:7px;display:flex;align-items:center;gap:5px
 }
-.mslider::-webkit-slider-thumb:hover{transform:scale(1.25)}
-.mlabels{display:flex;justify-content:space-between;margin-top:.45rem}
-.mlabels span{font-size:.6rem;color:var(--muted)}
-.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:.4rem}
-.obtn{
-  background:rgba(255,255,255,.025);border:1px solid var(--card-b);
-  border-radius:8px;padding:.48rem .3rem;cursor:pointer;
-  transition:all var(--tr);text-align:center;font-size:.68rem;color:var(--muted)
+.sec-h::before{content:'';width:2px;height:9px;background:var(--acc);border-radius:1px}
+.sec-h.p::before{background:var(--pur)}
+.sdiv{height:1px;background:var(--br);margin:14px 0}
+
+/* style rows */
+.srow{
+  display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:5px;
+  cursor:pointer;transition:all var(--r);border:1px solid transparent
 }
-.obtn:hover{background:var(--hover);border-color:rgba(233,69,96,.4);color:var(--text)}
-.obtn.on{background:rgba(233,69,96,.14);border-color:var(--accent);color:#fff}
-.oicon{font-size:1.1rem;margin-bottom:.18rem}
+.srow:hover{background:var(--s2)}
+.srow.on{background:var(--s3);border-color:rgba(233,69,96,.3)}
+.srow.fusion.on{background:rgba(124,92,252,.08);border-color:rgba(124,92,252,.35)}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background var(--r)}
+.srow.on .sdot{background:var(--acc)}
+.srow.fusion.on .sdot{background:var(--pur)}
+.sname{font-size:12px;font-weight:600}
+.sdesc{font-size:10px;color:var(--t2);margin-left:auto}
+
+/* sliders */
+.slrow{margin-bottom:13px}
+.slhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.sllabel{font-size:11px;font-weight:500;color:var(--t2)}
+.slval{
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;
+  background:var(--s2);border:1px solid var(--br);color:var(--t1);min-width:36px;text-align:center
+}
+.slider{
+  width:100%;height:3px;border-radius:2px;outline:none;
+  cursor:pointer;-webkit-appearance:none;appearance:none
+}
+.slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--thumb-color,var(--acc));
+  cursor:pointer;box-shadow:0 0 0 2px var(--bg);transition:transform var(--r)
+}
+.slider::-webkit-slider-thumb:hover{transform:scale(1.3)}
+.slticks{display:flex;justify-content:space-between;margin-top:4px}
+.sltick{font-size:9px;color:var(--t3)}
+
+/* option pickers */
+.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:3px}
+.oi{
+  padding:6px 6px;border-radius:4px;text-align:center;font-size:10px;
+  font-weight:500;color:var(--t2);background:var(--s2);border:1px solid var(--br);
+  cursor:pointer;transition:all var(--r)
+}
+.oi:hover{border-color:var(--br2);color:var(--t1)}
+.oi.on{background:var(--s3);border-color:rgba(233,69,96,.4);color:var(--t1)}
+.oi-ico{font-size:12px;margin-bottom:2px}
+
 /* ── OUTPUT ── */
-.output-col{display:flex;flex-direction:column;gap:1.1rem}
-.prompt-box{
-  background:rgba(8,8,14,.9);border:1px solid var(--card-b);
-  border-radius:12px;padding:1.1rem;min-height:110px;position:relative
+.out{display:flex;flex-direction:column;overflow:hidden}
+.charbar{
+  padding:9px 14px;border-bottom:1px solid var(--br);
+  display:none;align-items:center;gap:10px;flex-shrink:0
 }
-.prompt-box::before{
-  content:'PROMPT';position:absolute;top:.45rem;right:.7rem;
-  font-size:.55rem;color:var(--accent);letter-spacing:.2em
+.charbar.vis{display:flex}
+.cb-name{font-size:12px;font-weight:700}
+.cb-sub{font-size:10px;color:var(--t2)}
+.cb-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.ctag{font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(233,69,96,.1);color:var(--acc)}
+
+.pbox-wrap{padding:14px;border-bottom:1px solid var(--br);flex-shrink:0}
+.pbox-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.pbox{
+  background:var(--bg);border:1px solid var(--br);border-radius:6px;
+  padding:12px;font-family:'SF Mono','Cascadia Code','Courier New',monospace;
+  font-size:10.5px;line-height:1.8;color:#8888b8;
+  min-height:90px;max-height:160px;overflow-y:auto;
+  white-space:pre-wrap;word-break:break-word
 }
-#promptText{
-  font-family:'Courier New',monospace;font-size:.78rem;
-  line-height:1.65;color:#c0c0d0;white-space:pre-wrap;word-break:break-word
-}
-.cursor{
-  display:inline-block;width:2px;height:1em;background:var(--accent);
-  animation:blink 1s step-end infinite;vertical-align:middle;margin-left:1px
-}
+.cursor{display:inline-block;width:2px;height:.9em;background:var(--acc);animation:blink 1s step-end infinite;vertical-align:middle}
 @keyframes blink{50%{opacity:0}}
+.pparams{
+  display:flex;flex-wrap:wrap;gap:5px;margin-top:8px
+}
+.pp{
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;
+  background:rgba(233,69,96,.1);border:1px solid rgba(233,69,96,.2);color:var(--acc);
+  font-family:'SF Mono',monospace;letter-spacing:.04em
+}
+.pacts{display:flex;gap:6px;margin-top:10px}
 .btn{
-  background:var(--card);border:1px solid var(--card-b);border-radius:8px;
-  padding:.55rem 1.1rem;color:var(--text);font-size:.82rem;font-weight:600;
-  cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:.4rem
+  padding:6px 13px;border-radius:5px;font-size:11px;font-weight:600;
+  cursor:pointer;transition:all var(--r);display:inline-flex;align-items:center;gap:4px
 }
-.btn:hover{background:var(--hover);border-color:rgba(233,69,96,.4);transform:translateY(-1px)}
-.btn-primary{background:var(--accent);border-color:var(--accent)}
-.btn-primary:hover{background:#d63d57;border-color:#d63d57}
-.btn-ok{background:rgba(0,217,165,.12);border-color:var(--ok);color:var(--ok)}
-.act-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.9rem}
-.cinfo{display:flex;align-items:center;gap:.9rem}
-.ctags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.35rem}
-.ctag{font-size:.58rem;padding:2px 7px;border-radius:3px;background:rgba(233,69,96,.13);color:var(--accent)}
-.vlist{display:flex;flex-direction:column;gap:.45rem;max-height:280px;overflow-y:auto}
-.vitem{
-  background:rgba(255,255,255,.025);border:1px solid var(--card-b);
-  border-radius:8px;padding:.65rem;display:flex;align-items:flex-start;
-  justify-content:space-between;gap:.5rem;transition:background var(--tr)
+.btn-a{background:var(--acc);color:#fff}
+.btn-a:hover{background:#c8384f}
+.btn-d{background:var(--s2);border:1px solid var(--br);color:var(--t1)}
+.btn-d:hover{border-color:var(--br2)}
+
+.oscroll{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+.shd{
+  font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--t3);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px
 }
-.vitem:hover{background:var(--hover)}
-.vtext{font-family:'Courier New',monospace;font-size:.68rem;color:var(--muted);line-height:1.5;flex:1}
-.vacts{display:flex;gap:.2rem;flex-shrink:0}
-.hlist{max-height:290px;overflow-y:auto;display:flex;flex-direction:column;gap:.35rem}
-.hlist::-webkit-scrollbar{width:3px}
-.hlist::-webkit-scrollbar-thumb{background:var(--card-b);border-radius:2px}
-.hitem{
-  background:rgba(255,255,255,.025);border:1px solid var(--card-b);
-  border-radius:8px;padding:.55rem .65rem;
-  display:flex;align-items:center;gap:.5rem;transition:background var(--tr)
+.hbar{display:flex;align-items:center;gap:4px}
+.ht{padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;color:var(--t3);cursor:pointer;transition:all var(--r)}
+.ht.on,.ht:hover{background:var(--s3);color:var(--t1)}
+.vitem,.hitem{
+  background:var(--s1);border:1px solid var(--br);border-radius:5px;
+  padding:8px 9px;display:flex;align-items:flex-start;gap:7px;transition:all var(--r)
 }
-.hitem:hover{background:var(--hover)}
-.htext{font-size:.68rem;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.htime{font-size:.58rem;color:rgba(160,160,176,.45);flex-shrink:0}
-.empty{text-align:center;padding:1.75rem;color:var(--muted);font-size:.8rem}
-.ibtn{background:transparent;border:none;cursor:pointer;padding:.22rem;color:var(--muted);font-size:.95rem;transition:color var(--tr)}
-.ibtn:hover{color:var(--accent)}
-.ibtn.fav-on{color:gold}
-.ibtn.ok{color:var(--ok)}
+.vitem:hover,.hitem:hover{border-color:var(--br2)}
+.vtext,.htext{
+  flex:1;font-family:'SF Mono',monospace;font-size:9.5px;line-height:1.6;color:var(--t2);
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical
+}
+.htime{font-size:9px;color:var(--t3);white-space:nowrap;flex-shrink:0}
+.iacts{display:flex;gap:1px;flex-shrink:0}
+.ia{
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  border-radius:3px;font-size:10px;color:var(--t3);cursor:pointer;transition:all var(--r)
+}
+.ia:hover{background:var(--s2);color:var(--t1)}
+.ia.fav{color:gold}
+.ia.ok{color:var(--ok)}
+.empty{text-align:center;color:var(--t3);font-size:11px;padding:16px}
+
 .toast{
-  position:fixed;bottom:1.75rem;right:1.75rem;
-  background:var(--ok);color:#000;padding:.65rem 1.15rem;
-  border-radius:8px;font-weight:700;font-size:.82rem;
-  transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:999
+  position:fixed;bottom:18px;right:18px;background:var(--ok);color:#000;
+  font-size:11px;font-weight:700;padding:7px 14px;border-radius:5px;
+  transform:translateY(50px);opacity:0;transition:all .25s ease;z-index:999
 }
 .toast.show{transform:translateY(0);opacity:1}
-.hrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem}
+
+@media(max-width:900px){
+  body{overflow:auto;height:auto}
+  .app{height:auto;overflow:visible}
+  .body{grid-template-columns:1fr;overflow:visible}
+  .sb{max-height:200px;border-right:none;border-bottom:1px solid var(--br)}
+  .ctrl{border-right:none;border-bottom:1px solid var(--br)}
+  .out{min-height:400px}
+}
 </style>
 </head>
 <body>
+<div class="app">
 
 <header>
-  <div style="display:flex;align-items:center;gap:1rem">
-    <div class="logo">KIMIFY <em>MOTOR</em><sup>v2.0</sup></div>
-    <div style="font-size:.7rem;color:var(--muted)">Midjourney V8.1 &bull; Superhero Anime Prompts</div>
-  </div>
-  <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-    <span style="font-size:.65rem;padding:.2rem .65rem;border-radius:20px;background:rgba(233,69,96,.18);color:#e94560;font-weight:700" id="modeBadge">ANIME</span>
-    <span style="font-size:.7rem;color:var(--muted)">History: <strong id="hCount">0</strong></span>
-    <button class="btn btn-ok" id="exportBtn" style="font-size:.72rem;padding:.38rem .85rem">&#11015; Export All</button>
+  <div class="logo">KIMIFY <span>MOTOR</span> <sup style="font-size:8px;color:var(--t3);font-weight:400">v3.0</sup></div>
+  <div class="hpills">
+    <span class="pill pill-mode" id="modePill">ANIME</span>
+    <span class="pill pill-cnt">History <strong id="hCount">0</strong></span>
+    <button class="hbtn" id="exportBtn">&#8595; Export</button>
   </div>
 </header>
 
-<div class="layout">
+<div class="body">
 
-  <aside>
-    <div class="glass sidebar-inner">
-      <div class="sec-label">Characters</div>
-      <input class="search-input" id="charSearch" placeholder="Search by name&hellip;">
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <div class="sb-top">
+      <input class="sb-input" id="charSearch" placeholder="Search characters&#8230;">
       <div class="ftabs">
-        <button class="ftab on" data-f="All">All (55)</button>
-        <button class="ftab" data-f="DC">DC (20)</button>
-        <button class="ftab" data-f="Marvel">Marvel (20)</button>
-        <button class="ftab" data-f="Anime">Anime (15)</button>
+        <button class="ftab on" data-f="All">All</button>
+        <button class="ftab" data-f="DC">DC</button>
+        <button class="ftab" data-f="Marvel">Marvel</button>
+        <button class="ftab" data-f="Anime">Anime</button>
       </div>
-      <div class="char-grid" id="charGrid"></div>
     </div>
+    <div class="sb-list" id="charGrid"></div>
   </aside>
 
-  <div class="ctrl-col">
-    <div class="glass">
-      <div class="sec-label">Style Mode</div>
-      <div class="mode-sep">&#x25B6; Base Styles</div>
-      <div class="mode-grid">
-        <button class="mbtn on" data-mode="ANIME"><div class="micon">&#127912;</div><div class="mname">ANIME</div><div class="mdesc">Clean painterly, cel-shaded</div></button>
-        <button class="mbtn" data-mode="PHOTO"><div class="micon">&#128247;</div><div class="mname">PHOTO</div><div class="mdesc">Hyperrealistic, film grain</div></button>
-        <button class="mbtn" data-mode="SHONEN"><div class="micon">&#9889;</div><div class="mname">SHONEN</div><div class="mdesc">Dynamic, speed lines</div></button>
-        <button class="mbtn" data-mode="NEURAL"><div class="micon">&#129504;</div><div class="mname">NEURAL</div><div class="mdesc">Neural hyperrealistic, IMAX</div></button>
-      </div>
-      <div class="mode-sep">&#x2728; Premium Styles</div>
-      <div class="mode-grid-premium">
-        <button class="mbtn premium" data-mode="DARKPRO"><div class="micon">&#127769;</div><div class="mname">DARK PRO</div><div class="mdesc">Noir anime, moody cinematic</div></button>
-        <button class="mbtn premium" data-mode="CGI3D"><div class="micon">&#128187;</div><div class="mname">CGI 3D</div><div class="mdesc">Unreal Engine, ray tracing</div></button>
-        <button class="mbtn premium" data-mode="PVCRESIN"><div class="micon">&#127942;</div><div class="mname">PVC RESIN</div><div class="mdesc">Collectible figure, resin art</div></button>
-      </div>
+  <!-- CONTROLS -->
+  <div class="ctrl">
+    <div class="tbar">
+      <button class="tbtn on" data-tab="style">Style</button>
+      <button class="tbtn" data-tab="params">Parameters</button>
+      <button class="tbtn" data-tab="scene">Scene</button>
     </div>
 
-    <div class="glass">
-      <div class="mhdr">
-        <div class="sec-label" style="margin-bottom:0">Muscle Intensity</div>
-        <span class="mbadge" id="mBadge"></span>
-      </div>
-      <input type="range" class="mslider" id="mSlider" min="1" max="5" value="3">
-      <div class="mlabels">
-        <span>Athletic</span><span>Defined</span><span>Ultra</span><span>Extreme</span><span>Brutal</span>
-      </div>
-    </div>
-
-    <div class="glass">
-      <div class="sec-label">Pose</div>
-      <div class="ogrid">
-        <button class="obtn on" data-g="pose" data-v="standing heroic"><div class="oicon">&#129485;</div>Standing</button>
-        <button class="obtn" data-g="pose" data-v="dynamic action crouching"><div class="oicon">&#129470;</div>Crouching</button>
-        <button class="obtn" data-g="pose" data-v="walking forward confident"><div class="oicon">&#128694;</div>Walking</button>
-        <button class="obtn" data-g="pose" data-v="power stance arms raised"><div class="oicon">&#128165;</div>Power</button>
-        <button class="obtn" data-g="pose" data-v="mid-air action leap flying"><div class="oicon">&#129413;</div>Action</button>
-      </div>
-    </div>
-
-    <div class="glass">
-      <div class="sec-label">Clothing Style</div>
-      <div class="ogrid">
-        <button class="obtn on" data-g="cloth" data-v="classic superhero costume"><div class="oicon">&#129464;</div>Classic</button>
-        <button class="obtn" data-g="cloth" data-v="casual streetwear reimagined superhero outfit"><div class="oicon">&#128085;</div>Casual</button>
-        <button class="obtn" data-g="cloth" data-v="tactical military outfit"><div class="oicon">&#9876;</div>Tactical</button>
-        <button class="obtn" data-g="cloth" data-v="battle-damaged worn costume with tears"><div class="oicon">&#128293;</div>Battle</button>
-        <button class="obtn" data-g="cloth" data-v="powered-up glowing energy aura costume"><div class="oicon">&#10024;</div>Power-up</button>
-      </div>
-    </div>
-
-    <div class="glass">
-      <div class="sec-label">Background</div>
-      <div class="ogrid">
-        <button class="obtn on" data-g="bg" data-v="minimal clean gradient background"><div class="oicon">&#11035;</div>Minimal</button>
-        <button class="obtn" data-g="bg" data-v="urban cityscape night skyline background"><div class="oicon">&#127750;</div>Urban</button>
-        <button class="obtn" data-g="bg" data-v="dramatic natural landscape mountains background"><div class="oicon">&#127956;</div>Natural</button>
-        <button class="obtn" data-g="bg" data-v="futuristic tech facility holographic background"><div class="oicon">&#128300;</div>Tech</button>
-        <button class="obtn" data-g="bg" data-v="abstract energy swirls cosmic background"><div class="oicon">&#127744;</div>Abstract</button>
-      </div>
-    </div>
-
-    <div class="glass">
-      <div class="sec-label">Lighting</div>
-      <div class="ogrid">
-        <button class="obtn" data-g="light" data-v="dramatic rim lighting, strong contrast shadows"><div class="oicon">&#127763;</div>Dramatic</button>
-        <button class="obtn on" data-g="light" data-v="soft diffused studio lighting, gentle shadows"><div class="oicon">&#9729;</div>Soft</button>
-        <button class="obtn" data-g="light" data-v="golden hour warm sunlight, subtle lens flare"><div class="oicon">&#127749;</div>Golden</button>
-        <button class="obtn" data-g="light" data-v="neon cyberpunk colored light, vibrant reflections"><div class="oicon">&#128156;</div>Neon</button>
-        <button class="obtn" data-g="light" data-v="bioluminescent ethereal glow, mystical radiance"><div class="oicon">&#127775;</div>Bio</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="output-col">
-    <div class="glass" id="cinfoCard" style="display:none">
-      <div class="sec-label">Selected</div>
-      <div class="cinfo" id="cinfoBody"></div>
-    </div>
-
-    <div class="glass">
-      <div class="sec-label">Generated Prompt</div>
-      <div class="prompt-box">
-        <div id="promptText">Select a character to generate a prompt&hellip;</div>
-      </div>
-      <div class="act-row">
-        <button class="btn btn-primary" id="varBtn">&#9889; Generate 5 Variants</button>
-        <button class="btn" id="copyMain">&#128203; Copy Prompt</button>
-      </div>
-    </div>
-
-    <div class="glass" id="varCard" style="display:none">
-      <div class="sec-label">Variants</div>
-      <div class="vlist" id="vList"></div>
-    </div>
-
-    <div class="glass">
-      <div class="hrow">
-        <div class="sec-label" style="margin-bottom:0">History</div>
-        <div style="display:flex;gap:.4rem;align-items:center">
-          <button class="ftab on" id="tabAll">All</button>
-          <button class="ftab" id="tabFav">&#11088; Favs</button>
-          <button class="btn" style="font-size:.68rem;padding:.3rem .6rem" id="clearBtn">Clear</button>
+    <!-- STYLE TAB -->
+    <div class="tpanel on" id="tab-style">
+      <div class="sec">
+        <div class="sec-h">Base Styles</div>
+        <div id="styleList">
+          <div class="srow on" data-mode="ANIME"><div class="sdot"></div><div class="sname">ANIME</div><div class="sdesc">Clean painterly &middot; cel-shaded</div></div>
+          <div class="srow" data-mode="PHOTO"><div class="sdot"></div><div class="sname">PHOTO</div><div class="sdesc">Hyperrealistic &middot; film grain</div></div>
+          <div class="srow" data-mode="SHONEN"><div class="sdot"></div><div class="sname">SHONEN</div><div class="sdesc">Dynamic &middot; speed lines</div></div>
+          <div class="srow" data-mode="NEURAL"><div class="sdot"></div><div class="sname">NEURAL</div><div class="sdesc">Neural IMAX &middot; hyperdetail</div></div>
+          <div class="srow" data-mode="DARKPRO"><div class="sdot"></div><div class="sname">DARK PRO</div><div class="sdesc">Noir anime &middot; cinematic shadow</div></div>
+          <div class="srow" data-mode="CGI3D"><div class="sdot"></div><div class="sname">CGI 3D</div><div class="sdesc">UE5 ray tracing &middot; Octane</div></div>
+          <div class="srow" data-mode="PVCRESIN"><div class="sdot"></div><div class="sname">PVC RESIN</div><div class="sdesc">Collectible figure &middot; vinyl gloss</div></div>
+          <div class="srow" data-mode="GYBLY"><div class="sdot"></div><div class="sname">GYBLY</div><div class="sdesc">Anime face &middot; photo body</div></div>
         </div>
       </div>
-      <div class="hlist" id="hList"><div class="empty">No prompts generated yet</div></div>
+      <div class="sdiv"></div>
+      <div class="sec">
+        <div class="sec-h p">Fusion Styles</div>
+        <div id="fusionList">
+          <div class="srow fusion" data-mode="F_ANIMECGI"><div class="sdot"></div><div class="sname">ANIME + CGI</div><div class="sdesc">Toon-shaded 3D hybrid</div></div>
+          <div class="srow fusion" data-mode="F_PVCREAL"><div class="sdot"></div><div class="sname">PVC + REAL</div><div class="sdesc">Figure in real environment</div></div>
+          <div class="srow fusion" data-mode="F_GYBDARK"><div class="sdot"></div><div class="sname">GYBLY + DARK</div><div class="sdesc">Photo body &middot; anime eyes &middot; noir</div></div>
+          <div class="srow fusion" data-mode="F_ANIMERESIN"><div class="sdot"></div><div class="sname">ANIME + RESIN</div><div class="sdesc">Cel-shaded with vinyl gloss</div></div>
+          <div class="srow fusion" data-mode="F_NEURALPVC"><div class="sdot"></div><div class="sname">NEURAL + PVC</div><div class="sdesc">Impossible detail on plastic</div></div>
+          <div class="srow fusion" data-mode="F_CINEANIME"><div class="sdot"></div><div class="sname">CINEMATIC + ANIME</div><div class="sdesc">IMAX composition &middot; anime art</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARAMS TAB -->
+    <div class="tpanel" id="tab-params">
+      <div class="sec">
+        <div class="sec-h">Muscle Intensity</div>
+        <div class="slrow">
+          <div class="slhdr"><span class="sllabel">Level</span><span class="slval" id="muscVal">3</span></div>
+          <input type="range" class="slider" id="muscSlider" min="1" max="5" value="3">
+          <div class="slticks"><span class="sltick">Athletic</span><span class="sltick">Defined</span><span class="sltick">Ultra</span><span class="sltick">Extreme</span><span class="sltick">Brutal</span></div>
+        </div>
+      </div>
+      <div class="sdiv"></div>
+      <div class="sec">
+        <div class="sec-h">Midjourney V8.1 Parameters</div>
+        <div class="slrow">
+          <div class="slhdr"><span class="sllabel">--stylize <em style="color:var(--t3);font-style:normal">0–1000</em></span><span class="slval" id="styVal">100</span></div>
+          <input type="range" class="slider" id="stySlider" min="0" max="1000" value="100" step="10">
+          <div class="slticks"><span class="sltick">0 raw</span><span class="sltick">250</span><span class="sltick">500</span><span class="sltick">750</span><span class="sltick">1000 art</span></div>
+        </div>
+        <div class="slrow">
+          <div class="slhdr"><span class="sllabel">--chaos <em style="color:var(--t3);font-style:normal">0–100</em></span><span class="slval" id="chaosVal">0</span></div>
+          <input type="range" class="slider" id="chaosSlider" min="0" max="100" value="0">
+          <div class="slticks"><span class="sltick">0 stable</span><span class="sltick">50</span><span class="sltick">100 wild</span></div>
+        </div>
+        <div class="slrow">
+          <div class="slhdr"><span class="sllabel">--weird <em style="color:var(--t3);font-style:normal">0–3000</em></span><span class="slval" id="weirdVal">0</span></div>
+          <input type="range" class="slider" id="weirdSlider" min="0" max="3000" value="0" step="50">
+          <div class="slticks"><span class="sltick">0 normal</span><span class="sltick">1500</span><span class="sltick">3000 surreal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE TAB -->
+    <div class="tpanel" id="tab-scene">
+      <div class="sec">
+        <div class="sec-h">Pose</div>
+        <div class="ogrid">
+          <div class="oi on" data-g="pose" data-v="standing heroic confident"><div class="oi-ico">&#129485;</div>Standing</div>
+          <div class="oi" data-g="pose" data-v="dynamic action crouching low"><div class="oi-ico">&#129470;</div>Crouching</div>
+          <div class="oi" data-g="pose" data-v="walking forward powerful stride"><div class="oi-ico">&#128694;</div>Walking</div>
+          <div class="oi" data-g="pose" data-v="power stance arms raised energy"><div class="oi-ico">&#128165;</div>Power</div>
+          <div class="oi" data-g="pose" data-v="mid-air soaring action leap"><div class="oi-ico">&#129413;</div>Aerial</div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-h">Clothing</div>
+        <div class="ogrid">
+          <div class="oi on" data-g="cloth" data-v="classic faithful superhero costume"><div class="oi-ico">&#129464;</div>Classic</div>
+          <div class="oi" data-g="cloth" data-v="casual modern streetwear superhero reimagined"><div class="oi-ico">&#128085;</div>Casual</div>
+          <div class="oi" data-g="cloth" data-v="tactical military spec-ops outfit"><div class="oi-ico">&#9876;</div>Tactical</div>
+          <div class="oi" data-g="cloth" data-v="battle-damaged torn worn-out costume"><div class="oi-ico">&#128293;</div>Battle</div>
+          <div class="oi" data-g="cloth" data-v="powered-up glowing energy aura costume"><div class="oi-ico">&#10024;</div>Power-up</div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-h">Background</div>
+        <div class="ogrid">
+          <div class="oi on" data-g="bg" data-v="minimal clean gradient backdrop"><div class="oi-ico">&#11035;</div>Minimal</div>
+          <div class="oi" data-g="bg" data-v="urban night cityscape rooftop"><div class="oi-ico">&#127750;</div>Urban</div>
+          <div class="oi" data-g="bg" data-v="dramatic natural mountain landscape"><div class="oi-ico">&#127956;</div>Nature</div>
+          <div class="oi" data-g="bg" data-v="futuristic tech lab holographic environment"><div class="oi-ico">&#128300;</div>Tech</div>
+          <div class="oi" data-g="bg" data-v="abstract energy vortex cosmic space"><div class="oi-ico">&#127744;</div>Cosmic</div>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-h">Lighting</div>
+        <div class="ogrid">
+          <div class="oi" data-g="light" data-v="dramatic hard rim lighting deep contrast shadows"><div class="oi-ico">&#127763;</div>Dramatic</div>
+          <div class="oi on" data-g="light" data-v="soft diffused studio lighting even fill light"><div class="oi-ico">&#9729;</div>Soft</div>
+          <div class="oi" data-g="light" data-v="golden hour warm sunlight with subtle lens flare"><div class="oi-ico">&#127749;</div>Golden</div>
+          <div class="oi" data-g="light" data-v="neon cyberpunk colored accent lighting vibrant"><div class="oi-ico">&#128156;</div>Neon</div>
+          <div class="oi" data-g="light" data-v="bioluminescent ethereal glowing radiance mystical"><div class="oi-ico">&#127775;</div>Bio</div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- OUTPUT -->
+  <div class="out">
+    <div class="charbar" id="charbar">
+      <div class="cav" id="cbAv" style="width:30px;height:30px;font-size:12px"></div>
+      <div>
+        <div class="cb-name" id="cbName"></div>
+        <div class="cb-sub" id="cbSub"></div>
+        <div class="cb-tags" id="cbTags"></div>
+      </div>
+    </div>
+    <div class="pbox-wrap">
+      <div class="pbox-label">Generated Prompt</div>
+      <div class="pbox" id="pbox"><span style="color:var(--t3)">Select a character to begin&#8230;</span></div>
+      <div class="pparams" id="pparams"></div>
+      <div class="pacts">
+        <button class="btn btn-a" id="varBtn">&#9889; 5 Variants</button>
+        <button class="btn btn-d" id="copyBtn">&#8966; Copy</button>
+      </div>
+    </div>
+    <div class="oscroll">
+      <div id="varSec" style="display:none">
+        <div class="shd">Variants</div>
+        <div id="varList"></div>
+      </div>
+      <div>
+        <div class="shd">
+          <span>History</span>
+          <div class="hbar">
+            <span class="ht on" id="htAll">All</span>
+            <span class="ht" id="htFav">&#9733; Favs</span>
+            <button class="hbtn" style="font-size:9px;padding:2px 7px" id="clearBtn">Clear</button>
+          </div>
+        </div>
+        <div id="histList"><div class="empty">No prompts yet</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════ DATASET ══════════════════
-const CHARS=[
-{id:"batgirl",n:"Batgirl",s:"Cassandra Cain",u:"DC",c:["black","red"],e:"bat symbol",p:"Cassandra Cain Batgirl, short black hair, intense blue eyes",t:["tactical","martial arts"]},
-{id:"supergirl",n:"Supergirl",s:"Kara Zor-El",u:"DC",c:["blue","red","gold"],e:"S-shield",p:"Supergirl Kara Zor-El, long blonde flowing hair, blue eyes",t:["flying","powerhouse"]},
-{id:"wonderwoman",n:"Wonder Woman",s:"Diana Prince",u:"DC",c:["red","gold","blue"],e:"eagle emblem",p:"Wonder Woman Diana Prince, long black hair, blue eyes",t:["warrior","mythology"]},
-{id:"flash_f",n:"The Flash",s:"Jesse Quick",u:"DC",c:["red","gold"],e:"lightning bolt",p:"Female Flash Jesse Quick, dark curly hair, green eyes",t:["speed","energy"]},
-{id:"greenlantern",n:"Green Lantern",s:"Jessica Cruz",u:"DC",c:["green","black"],e:"power ring",p:"Jessica Cruz Green Lantern, dark hair, bright green eyes",t:["constructs","space"]},
-{id:"mera",n:"Mera",s:"Queen of Atlantis",u:"DC",c:["green","orange"],e:"trident",p:"Mera Queen of Atlantis, long red hair, green eyes",t:["water","royalty"]},
-{id:"cyborgirl",n:"Cyborgirl",s:"Tech Hybrid",u:"DC",c:["silver","red"],e:"circuit patterns",p:"Cyborgirl, metallic silver skin, glowing red eyes",t:["tech","cybernetic"]},
-{id:"robin_f",n:"Robin",s:"Carrie Kelley",u:"DC",c:["red","green","yellow"],e:"R emblem",p:"Carrie Kelley Robin, short red hair, green eyes",t:["sidekick","acrobatic"]},
-{id:"nightwing_f",n:"Nightwing",s:"Female",u:"DC",c:["black","blue"],e:"nightbird",p:"Female Nightwing, black hair, blue eyes",t:["acrobat","leader"]},
-{id:"batwoman",n:"Batwoman",s:"Kate Kane",u:"DC",c:["black","red"],e:"bat symbol",p:"Batwoman Kate Kane, short red hair, green eyes",t:["military","detective"]},
-{id:"harley",n:"Harley Quinn",s:"Harleen Quinzel",u:"DC",c:["red","black","blue"],e:"diamond",p:"Harley Quinn, blonde pigtails with red and blue dye, blue eyes",t:["chaotic","gymnast"]},
-{id:"poisonivy",n:"Poison Ivy",s:"Pamela Isley",u:"DC",c:["green","red"],e:"leaf vines",p:"Poison Ivy, long flowing red hair, bright green eyes",t:["nature","plants"]},
-{id:"catwoman",n:"Catwoman",s:"Selina Kyle",u:"DC",c:["black"],e:"cat claws",p:"Catwoman Selina Kyle, black hair, piercing green eyes",t:["thief","agile"]},
-{id:"missmartian",n:"Miss Martian",s:"M'gann M'orzz",u:"DC",c:["green","white"],e:"X emblem",p:"Miss Martian, green skin, red hair, glowing eyes",t:["alien","telepath"]},
-{id:"arrowette",n:"Arrowette",s:"Artemis Crock",u:"DC",c:["green","white"],e:"arrow",p:"Arrowette Artemis Crock, blonde hair, blue eyes",t:["archer","skilled"]},
-{id:"marymarvel",n:"Mary Marvel",s:"Mary Batson",u:"DC",c:["red","gold","white"],e:"lightning bolt",p:"Mary Marvel, black hair, blue eyes",t:["magic","shazam"]},
-{id:"blackcanary",n:"Black Canary",s:"Dinah Lance",u:"DC",c:["black","yellow"],e:"canary",p:"Black Canary Dinah Lance, blonde hair, blue eyes",t:["sonic cry","martial arts"]},
-{id:"zatanna",n:"Zatanna",s:"Zatanna Zatara",u:"DC",c:["black","white"],e:"Z",p:"Zatanna Zatara, long black hair, blue eyes, magician attire",t:["magic","stage"]},
-{id:"raven",n:"Raven",s:"Rachel Roth",u:"DC",c:["blue","purple","black"],e:"soul-self gem",p:"Raven Rachel Roth, short purple hair, dark violet eyes",t:["demon","dark magic"]},
-{id:"stargirl",n:"Stargirl",s:"Courtney Whitmore",u:"DC",c:["blue","gold","red"],e:"cosmic staff",p:"Stargirl Courtney Whitmore, blonde hair, blue eyes",t:["cosmic staff","legacy"]},
+// ══════════════════════════════════════════════════════
+// DATASET — 55 characters
+// ══════════════════════════════════════════════════════
+var CHARS=[
+// DC (20)
+{id:"batgirl",n:"Batgirl",s:"Cassandra Cain",u:"DC",c:["black","red"],e:"bat symbol",p:"Cassandra Cain Batgirl, short black hair, intense blue eyes, athletic dark figure",t:["tactical","martial arts","stealth"]},
+{id:"supergirl",n:"Supergirl",s:"Kara Zor-El",u:"DC",c:["blue","red","gold"],e:"S-shield",p:"Supergirl Kara Zor-El, long blonde flowing hair, bright blue eyes, Kryptonian power",t:["flying","powerhouse","alien"]},
+{id:"wonderwoman",n:"Wonder Woman",s:"Diana Prince",u:"DC",c:["red","gold","blue"],e:"golden eagle emblem",p:"Wonder Woman Diana Prince, long dark hair, blue eyes, Amazonian warrior",t:["warrior","mythology","leader"]},
+{id:"flash_f",n:"The Flash",s:"Jesse Quick",u:"DC",c:["red","gold"],e:"lightning bolt",p:"Female Flash Jesse Quick, dark curly hair, green eyes, speed force aura",t:["speed","energy"]},
+{id:"greenlantern",n:"Green Lantern",s:"Jessica Cruz",u:"DC",c:["green","black"],e:"power ring construct",p:"Jessica Cruz Green Lantern, dark hair, bright green eyes, power ring glowing",t:["constructs","space","willpower"]},
+{id:"mera",n:"Mera",s:"Queen of Atlantis",u:"DC",c:["green","orange"],e:"trident",p:"Mera Queen of Atlantis, long red hair, green eyes, hydrokinetic powers",t:["water","royalty","magic"]},
+{id:"cyborgirl",n:"Cyborgirl",s:"Tech Hybrid",u:"DC",c:["silver","red"],e:"circuit emblem",p:"Cyborgirl, metallic silver skin, glowing red eyes, cybernetic enhancements",t:["tech","cybernetic","hacker"]},
+{id:"robin_f",n:"Robin",s:"Carrie Kelley",u:"DC",c:["red","green","yellow"],e:"R emblem",p:"Carrie Kelley Robin, short red hair, green eyes, acrobatic sidekick",t:["sidekick","acrobatic","young"]},
+{id:"nightwing_f",n:"Nightwing",s:"Female",u:"DC",c:["black","blue"],e:"nightbird wing",p:"Female Nightwing, black hair, blue eyes, acrobatic leader",t:["acrobat","leader"]},
+{id:"batwoman",n:"Batwoman",s:"Kate Kane",u:"DC",c:["black","red"],e:"bat symbol",p:"Batwoman Kate Kane, short red hair, green eyes, military detective",t:["military","detective"]},
+{id:"harley",n:"Harley Quinn",s:"Harleen Quinzel",u:"DC",c:["red","black","blue"],e:"diamond",p:"Harley Quinn, blonde pigtails with red and black, blue eyes, chaotic energy",t:["chaotic","gymnast"]},
+{id:"poisonivy",n:"Poison Ivy",s:"Pamela Isley",u:"DC",c:["green"],e:"leaf vine",p:"Poison Ivy Pamela Isley, long red hair, green eyes, plant control",t:["nature","seduction"]},
+{id:"catwoman",n:"Catwoman",s:"Selina Kyle",u:"DC",c:["black"],e:"cat claw mark",p:"Catwoman Selina Kyle, black hair, green eyes, feline agility",t:["thief","agile"]},
+{id:"missmartian",n:"Miss Martian",s:"M'gann M'orzz",u:"DC",c:["green","white"],e:"X chest emblem",p:"Miss Martian, green skin, red hair, alien telepath",t:["alien","telepath"]},
+{id:"arrowette",n:"Arrowette",s:"Artemis Crock",u:"DC",c:["green","white"],e:"arrow",p:"Arrowette Artemis Crock, blonde hair, blue eyes, skilled archer",t:["archer","skilled"]},
+{id:"marymarvel",n:"Mary Marvel",s:"Mary Batson",u:"DC",c:["red","gold"],e:"lightning bolt",p:"Mary Marvel, black hair, blue eyes, Shazam powers pure heart",t:["magic","shazam"]},
+{id:"blackcanary",n:"Black Canary",s:"Dinah Lance",u:"DC",c:["black","yellow"],e:"canary silhouette",p:"Black Canary Dinah Lance, blonde hair, blue eyes, sonic scream martial artist",t:["sonic","martial arts"]},
+{id:"zatanna",n:"Zatanna",s:"Zatanna Zatara",u:"DC",c:["black","white"],e:"Z",p:"Zatanna Zatara, long black hair, blue eyes, stage magician spellcaster",t:["magic","stage"]},
+{id:"raven",n:"Raven",s:"Rachel Roth",u:"DC",c:["blue","purple","black"],e:"soul-self gem",p:"Raven Rachel Roth, purple hair, dark violet eyes, demon heritage empath",t:["demon","dark magic"]},
+{id:"stargirl",n:"Stargirl",s:"Courtney Whitmore",u:"DC",c:["blue","gold","red"],e:"cosmic staff",p:"Stargirl Courtney Whitmore, blonde hair, blue eyes, cosmic staff legacy",t:["cosmic","legacy"]},
+// Marvel (20)
 {id:"spidergwen",n:"Spider-Gwen",s:"Gwen Stacy",u:"Marvel",c:["white","black","pink"],e:"spider",p:"Spider-Gwen Gwen Stacy, blonde hair with pink highlights, blue eyes",t:["spider","drummer"]},
-{id:"americandream",n:"American Dream",s:"Peggy Carter",u:"Marvel",c:["blue","red","white"],e:"star shield",p:"American Dream Peggy Carter, blonde hair, blue eyes",t:["legacy","shield"]},
-{id:"rescue",n:"Rescue",s:"Pepper Potts",u:"Marvel",c:["red","gold","white"],e:"arc reactor",p:"Rescue Pepper Potts, red hair, blue eyes, Iron Man armor",t:["tech","armor"]},
-{id:"thor_jane",n:"Thor",s:"Jane Foster",u:"Marvel",c:["red","silver","gold"],e:"mjolnir",p:"Jane Foster Thor Mighty, blonde hair, blue eyes, wielding Mjolnir",t:["worthy","hammer"]},
-{id:"shehulk",n:"She-Hulk",s:"Jennifer Walters",u:"Marvel",c:["green","white"],e:"gamma symbol",p:"She-Hulk Jennifer Walters, green skin and hair, green eyes, tall muscular",t:["lawyer","gamma"]},
-{id:"shuri",n:"Black Panther",s:"Shuri",u:"Marvel",c:["black","purple"],e:"panther",p:"Shuri Black Panther, black hair, brown eyes, Vibranium suit",t:["tech","princess"]},
-{id:"clea",n:"Clea",s:"Dark Dimension",u:"Marvel",c:["blue","white","yellow"],e:"Eye of Agamotto",p:"Clea of the Dark Dimension, white hair, blue eyes, mystical robes",t:["magic","dark dimension"]},
-{id:"wasp",n:"Wasp",s:"Hope van Dyne",u:"Marvel",c:["red","yellow","black"],e:"wasp wings",p:"Wasp Hope van Dyne, brown hair, brown eyes, wing suit",t:["size-changing","tech"]},
-{id:"x23",n:"X-23",s:"Laura Kinney",u:"Marvel",c:["yellow","blue","black"],e:"adamantium claws",p:"X-23 Laura Kinney, black hair, green eyes",t:["claws","healing"]},
-{id:"ladydeadpool",n:"Lady Deadpool",s:"Wanda Wilson",u:"Marvel",c:["red","black"],e:"deadpool symbol",p:"Lady Deadpool Wanda Wilson, red black suit, dual katanas",t:["chaotic","healing"]},
-{id:"rogue",n:"Rogue",s:"Anna Marie",u:"Marvel",c:["green","yellow","white"],e:"gloves",p:"Rogue Anna Marie, brown hair with white streak, green eyes",t:["absorption","southern"]},
-{id:"jeangrey",n:"Phoenix",s:"Jean Grey",u:"Marvel",c:["green","gold","red"],e:"phoenix raptor",p:"Jean Grey Phoenix, long red hair, green eyes, phoenix fire aura",t:["telepath","phoenix"]},
-{id:"elektra",n:"Elektra",s:"Natchios",u:"Marvel",c:["red"],e:"twin sai",p:"Elektra Natchios, black hair, dark eyes, red ninja costume",t:["assassin","ninja"]},
-{id:"punisher_f",n:"Punisher",s:"Lynn Michaels",u:"Marvel",c:["black","white"],e:"skull symbol",p:"Female Punisher Lynn Michaels, blonde hair, blue eyes",t:["vigilante","arsenal"]},
-{id:"ghostrider_f",n:"Ghost Rider",s:"Alejandra Jones",u:"Marvel",c:["black","orange"],e:"flaming skull",p:"Alejandra Jones Ghost Rider, black hair, fiery eyes, skull ablaze",t:["fire","vengeance"]},
-{id:"ardina",n:"Silver Surfer",s:"Ardina",u:"Marvel",c:["silver","gold"],e:"cosmic surfboard",p:"Ardina Silver Surfer fem, silver skin, cosmic white eyes, surfboard",t:["cosmic","space"]},
-{id:"namora",n:"Namora",s:"Atlantean",u:"Marvel",c:["green","blue"],e:"ankle wings",p:"Namora Atlantean, blonde hair, green eyes, ankle wings",t:["atlantean","warrior"]},
-{id:"viv",n:"Viv Vision",s:"Android",u:"Marvel",c:["green","red"],e:"mind gem",p:"Viv Vision android, green synthetic skin, glowing gem forehead",t:["android","synthetic"]},
-{id:"katebishop",n:"Hawkeye",s:"Kate Bishop",u:"Marvel",c:["purple","black"],e:"H",p:"Kate Bishop Hawkeye, black hair, brown eyes, purple costume",t:["archer","young"]},
-{id:"scarletwitch",n:"Scarlet Witch",s:"Wanda Maximoff",u:"Marvel",c:["red","scarlet","crimson"],e:"chaos hex",p:"Scarlet Witch Wanda Maximoff, auburn hair, green eyes, chaos magic",t:["magic","chaos"]},
-{id:"sailormoon",n:"Sailor Moon",s:"Usagi Tsukino",u:"Anime",c:["white","blue","red","gold"],e:"moon crescent",p:"Sailor Moon Usagi Tsukino, iconic blonde twin tails, blue eyes",t:["magical girl","moon"]},
-{id:"mikasa",n:"Mikasa Ackerman",s:"Scout",u:"Anime",c:["gray","green","black"],e:"wings of freedom",p:"Mikasa Ackerman Survey Corps, black hair, gray eyes",t:["soldier","titan"]},
-{id:"motoko",n:"Motoko Kusanagi",s:"Major",u:"Anime",c:["white","black","purple"],e:"Section 9",p:"Motoko Kusanagi Major, purple hair, red eyes, cybernetic body",t:["cyborg","hacker"]},
-{id:"revy",n:"Revy",s:"Two Hands",u:"Anime",c:["black","orange"],e:"tribal tattoo",p:"Revy Two Hands, black hair, brown eyes, tribal arm tattoo",t:["mercenary","pistols"]},
-{id:"saber",n:"Saber",s:"Artoria Pendragon",u:"Anime",c:["blue","silver","gold"],e:"Excalibur",p:"Saber Artoria Pendragon, blonde hair, green eyes, medieval armor",t:["knight","king"]},
-{id:"ryuko",n:"Ryuko Matoi",s:"Transfer Student",u:"Anime",c:["black","red","white"],e:"scissor blade",p:"Ryuko Matoi, black hair with red streak, blue eyes",t:["revenge","scissor blade"]},
-{id:"zerotwo",n:"Zero Two",s:"Code:002",u:"Anime",c:["red","white","pink"],e:"horns",p:"Zero Two, long pink hair, red eyes, pink horns, pilot suit",t:["demon","pilot"]},
-{id:"asuka",n:"Asuka Langley",s:"Evangelion",u:"Anime",c:["red","orange","white"],e:"02 plug suit",p:"Asuka Langley Soryu, auburn red hair, blue eyes, Eva plug suit",t:["pilot","pride"]},
-{id:"power",n:"Power",s:"Blood Fiend",u:"Anime",c:["blonde","red","white"],e:"blood devil",p:"Power Blood Fiend, blonde hair, red eyes, devil horns",t:["blood","devil"]},
-{id:"makima",n:"Makima",s:"Control Devil",u:"Anime",c:["red","black"],e:"control devil rings",p:"Makima Control Devil, red hair, golden ring-patterned eyes",t:["control","manipulation"]},
-{id:"yor",n:"Yor Forger",s:"Thorn Princess",u:"Anime",c:["black","red"],e:"thorn crown",p:"Yor Forger Thorn Princess, black hair, red eyes, elegant assassin",t:["assassin","mother"]},
-{id:"tsunade",n:"Tsunade",s:"Fifth Hokage",u:"Anime",c:["green","white","red"],e:"diamond mark",p:"Tsunade Fifth Hokage, blonde hair, brown eyes, diamond forehead mark",t:["medical","strength"]},
-{id:"erza",n:"Erza Scarlet",s:"Titania",u:"Anime",c:["red","silver","blue"],e:"fairy tail mark",p:"Erza Scarlet Titania, long scarlet red hair, brown eyes, armor",t:["requip","fairy tail"]},
-{id:"nami",n:"Nami",s:"Navigator",u:"Anime",c:["orange","blue","white"],e:"tangerine pinwheel",p:"Nami Navigator One Piece, orange hair, brown eyes, clima tact",t:["navigator","weather"]},
-{id:"nicorobin",n:"Nico Robin",s:"Archaeologist",u:"Anime",c:["black","blue","purple"],e:"flower bloom",p:"Nico Robin archaeologist, dark black hair, blue eyes, flower powers",t:["flowers","archaeology"]}
+{id:"americandream",n:"American Dream",s:"Peggy Carter",u:"Marvel",c:["blue","red","white"],e:"star shield",p:"American Dream Peggy Carter, blonde hair, blue eyes, shield legacy",t:["legacy","shield"]},
+{id:"rescue",n:"Rescue",s:"Pepper Potts",u:"Marvel",c:["red","gold"],e:"arc reactor",p:"Rescue Pepper Potts, red hair, blue eyes, Iron Man armor",t:["tech","armor"]},
+{id:"thor_jane",n:"Thor",s:"Jane Foster",u:"Marvel",c:["red","silver","gold"],e:"Mjolnir",p:"Jane Foster Thor Mighty, blonde hair, blue eyes, worthy hammer bearer",t:["worthy","hammer"]},
+{id:"shehulk",n:"She-Hulk",s:"Jennifer Walters",u:"Marvel",c:["green"],e:"gamma symbol",p:"She-Hulk Jennifer Walters, green skin, green hair, powerful attorney",t:["lawyer","gamma"]},
+{id:"shuri",n:"Black Panther",s:"Shuri",u:"Marvel",c:["black","purple"],e:"panther",p:"Shuri Black Panther, black hair, brown eyes, Vibranium suit tech genius",t:["tech","princess"]},
+{id:"clea",n:"Clea",s:"Dark Dimension",u:"Marvel",c:["blue","white"],e:"Eye of Agamotto",p:"Clea of the Dark Dimension, white hair, blue eyes, mystical sorcerer",t:["magic","dark dimension"]},
+{id:"wasp",n:"Wasp",s:"Hope van Dyne",u:"Marvel",c:["red","yellow","black"],e:"wasp wings",p:"Wasp Hope van Dyne, brown hair, brown eyes, size-changing fighter",t:["size-changing","tech"]},
+{id:"x23",n:"X-23",s:"Laura Kinney",u:"Marvel",c:["yellow","blue"],e:"adamantium claws",p:"X-23 Laura Kinney, black hair, green eyes, adamantium claws",t:["claws","healing"]},
+{id:"ladydeadpool",n:"Lady Deadpool",s:"Wanda Wilson",u:"Marvel",c:["red","black"],e:"deadpool symbol",p:"Lady Deadpool Wanda Wilson, red black suit, dual katanas, masked",t:["chaotic","katanas"]},
+{id:"rogue",n:"Rogue",s:"Anna Marie",u:"Marvel",c:["green","yellow","white"],e:"gloves",p:"Rogue Anna Marie, brown hair with white streak, green eyes, power absorber",t:["absorption","southern"]},
+{id:"jeangrey",n:"Phoenix",s:"Jean Grey",u:"Marvel",c:["green","gold","red"],e:"phoenix raptor",p:"Jean Grey Phoenix, long red hair, green eyes, cosmic phoenix fire aura",t:["telepath","phoenix"]},
+{id:"elektra",n:"Elektra",s:"Natchios",u:"Marvel",c:["red"],e:"twin sai",p:"Elektra Natchios, black hair, dark eyes, red ninja assassin",t:["assassin","ninja"]},
+{id:"punisher_f",n:"Punisher",s:"Lynn Michaels",u:"Marvel",c:["black","white"],e:"skull",p:"Lynn Michaels Punisher, blonde hair, blue eyes, skull emblem vigilante",t:["vigilante","arsenal"]},
+{id:"ghostrider_f",n:"Ghost Rider",s:"Alejandra Jones",u:"Marvel",c:["black","orange"],e:"flaming skull",p:"Alejandra Jones Ghost Rider, black hair, fiery eyes, flaming skull spirit",t:["fire","vengeance"]},
+{id:"ardina",n:"Silver Surfer",s:"Ardina",u:"Marvel",c:["silver","gold"],e:"cosmic surfboard",p:"Ardina Silver Surfer, silver skin, cosmic white eyes, power surfboard",t:["cosmic","space"]},
+{id:"namora",n:"Namora",s:"Atlantean",u:"Marvel",c:["green","blue"],e:"ankle wings",p:"Namora Atlantean, blonde hair, green eyes, ankle wings warrior",t:["atlantean","warrior"]},
+{id:"viv",n:"Viv Vision",s:"Android",u:"Marvel",c:["green","red"],e:"mind gem",p:"Viv Vision android, green synthetic skin, mind gem forehead",t:["android","synthetic"]},
+{id:"katebishop",n:"Hawkeye",s:"Kate Bishop",u:"Marvel",c:["purple","black"],e:"H emblem",p:"Kate Bishop Hawkeye, dark hair, brown eyes, purple archer",t:["archer","young"]},
+{id:"scarletwitch",n:"Scarlet Witch",s:"Wanda Maximoff",u:"Marvel",c:["red","scarlet"],e:"chaos hex",p:"Scarlet Witch Wanda Maximoff, auburn hair, green eyes, chaos magic reality warper",t:["magic","chaos"]},
+// Anime (15)
+{id:"sailormoon",n:"Sailor Moon",s:"Usagi Tsukino",u:"Anime",c:["white","blue","red","gold"],e:"moon crescent",p:"Sailor Moon Usagi Tsukino, blonde twin tails, blue eyes, magical girl",t:["magical girl","moon"]},
+{id:"mikasa",n:"Mikasa Ackerman",s:"Scout",u:"Anime",c:["gray","green"],e:"wings of freedom",p:"Mikasa Ackerman Survey Corps, black hair, gray eyes, Ackerman lineage",t:["soldier","titan"]},
+{id:"motoko",n:"Motoko Kusanagi",s:"Major",u:"Anime",c:["purple","black"],e:"Section 9",p:"Motoko Kusanagi Major, purple hair, red eyes, full cyborg body",t:["cyborg","hacker"]},
+{id:"revy",n:"Revy",s:"Two Hands",u:"Anime",c:["black","orange"],e:"tribal tattoo",p:"Revy Two Hands, black hair, brown eyes, tribal arm tattoo, dual pistols",t:["mercenary","pistols"]},
+{id:"saber",n:"Saber",s:"Artoria Pendragon",u:"Anime",c:["blue","silver","gold"],e:"Excalibur",p:"Saber Artoria Pendragon, blonde hair, green eyes, plate armor king",t:["knight","king"]},
+{id:"ryuko",n:"Ryuko Matoi",s:"Transfer Student",u:"Anime",c:["black","red"],e:"scissor blade",p:"Ryuko Matoi, black hair with red streak, blue eyes, Senketsu",t:["revenge","scissor blade"]},
+{id:"zerotwo",n:"Zero Two",s:"Code:002",u:"Anime",c:["red","white","pink"],e:"pink horns",p:"Zero Two, long pink hair, red eyes, pink horns, pilot suit",t:["demon","pilot"]},
+{id:"asuka",n:"Asuka Langley",s:"Evangelion",u:"Anime",c:["red","orange"],e:"02 plug suit",p:"Asuka Langley Soryu, auburn red hair, blue eyes, Eva Unit 02 plug suit",t:["pilot","pride"]},
+{id:"power_csm",n:"Power",s:"Blood Fiend",u:"Anime",c:["blonde","red"],e:"blood devil",p:"Power Blood Fiend Chainsaw Man, blonde hair, red eyes, devil horns",t:["blood","devil"]},
+{id:"makima",n:"Makima",s:"Control Devil",u:"Anime",c:["red","black"],e:"control rings",p:"Makima Control Devil, red hair, golden ring-pattern eyes, composed expression",t:["control","manipulation"]},
+{id:"yor",n:"Yor Forger",s:"Thorn Princess",u:"Anime",c:["black","red"],e:"thorn crown",p:"Yor Forger Thorn Princess, black hair, red eyes, elegant deadly assassin",t:["assassin","mother"]},
+{id:"tsunade",n:"Tsunade",s:"Fifth Hokage",u:"Anime",c:["green","white"],e:"diamond mark",p:"Tsunade Fifth Hokage, blonde hair, brown eyes, diamond forehead mark",t:["medical","strength"]},
+{id:"erza",n:"Erza Scarlet",s:"Titania",u:"Anime",c:["red","silver"],e:"fairy tail mark",p:"Erza Scarlet Titania, long scarlet red hair, brown eyes, requip armor",t:["requip","fairy tail"]},
+{id:"nami",n:"Nami",s:"Navigator",u:"Anime",c:["orange","blue"],e:"tangerine",p:"Nami Navigator One Piece, orange hair, brown eyes, clima tact weather",t:["navigator","weather"]},
+{id:"nicorobin",n:"Nico Robin",s:"Archaeologist",u:"Anime",c:["black","blue"],e:"flower bloom",p:"Nico Robin archaeologist, dark black hair, blue eyes, flower-flower power",t:["flowers","archaeology"]}
 ];
 
-// ══════════════════ PROMPT ENGINE ══════════════════
-const MODES={
+// ══════════════════════════════════════════════════════
+// MODE DEFINITIONS
+// ══════════════════════════════════════════════════════
+var MODES={
   ANIME:{
-    pre:"high-end anime illustration, clean painterly style, cel-shaded hybrid technique",
-    skin:"smooth luminous anime skin, soft color gradients, clean highlights",
-    suf:"crisp anime line work, vibrant color palette, professional anime key visual"
+    pre:"high-end anime illustration, clean painterly style, cel-shaded hybrid technique, professional key visual",
+    skin:"smooth luminous anime skin, soft color gradients, clean specular highlights, anatomically accurate mature character",
+    suf:"crisp line work, vibrant balanced color palette, anime masterpiece quality, adult character maintaining professional illustration standards"
   },
   PHOTO:{
-    pre:"hyperrealistic professional photography, 8K resolution, film grain, bokeh",
-    skin:"photorealistic skin texture, natural pores, subsurface scattering",
-    suf:"shot on RED Helium 8K camera, professional photography, Hasselblad quality"
+    pre:"hyperrealistic professional photography, 8K resolution, shallow depth of field, film grain texture",
+    skin:"photorealistic skin texture, natural pores visible, subsurface scattering, realistic melanin gradients",
+    suf:"RED Helium 8K cinematography, Hasselblad quality, editorial photography, maintaining anatomical accuracy throughout"
   },
   SHONEN:{
-    pre:"shonen manga illustration, exaggerated dynamic proportions, bold ink lines",
-    skin:"manga halftone texture, bold ink contours, dramatic speedlines",
-    suf:"manga panel composition, impact frames, screentone shading, jump magazine style"
+    pre:"shonen manga style, exaggerated dynamic proportions, bold confident ink lines, high energy composition",
+    skin:"manga halftone shading, bold ink contour lines, dramatic motion lines, cinematic manga panel",
+    suf:"impact frames, screentone texture, jump manga composition, exaggerated perspective, adult manga style"
   },
   NEURAL:{
-    pre:"neural hyperrealistic synthesis, impossible microscopic detail, IMAX quality render",
-    skin:"photorealistic skin with quantum-level detail, every pore perfect, subsurface glow",
-    suf:"neural network art synthesis, impossible fidelity, ultra-high definition masterpiece"
+    pre:"neural hyperrealistic synthesis, impossible microscopic detail, IMAX 12K quality render, quantum precision",
+    skin:"neural-rendered skin with sub-cellular detail, perfect anatomical form, impossible photorealism",
+    suf:"neural network art synthesis, beyond photorealistic, ultra-high definition, every detail rendered with perfection"
   },
   DARKPRO:{
-    pre:"dark atmospheric anime illustration, deep noir aesthetic, cinematic shadow play, high contrast moody anime, black palette dominance, dramatic chiaroscuro",
-    skin:"deep shadow gradients on skin, chiaroscuro anime shading, glowing highlights against darkness, dramatic rimlight on skin contours",
-    suf:"dark anime masterpiece, noir atmosphere, velvet deep blacks, sharp neon accent highlights, midnight cinematic feel, professional dark illustration, --v 8.1"
+    pre:"dark atmospheric anime illustration, deep noir aesthetic, high contrast cinematic shadows, black dominant palette",
+    skin:"chiaroscuro shading on skin, deep shadow gradients, sharp neon rimlight against darkness, dramatic contrast",
+    suf:"midnight noir atmosphere, velvet deep blacks, sharp glowing accent highlights, professional dark cinematic anime"
   },
   CGI3D:{
-    pre:"photorealistic CGI 3D render, Unreal Engine 5 Lumen quality, real-time ray tracing, AAA game cinematic render, digital human technology",
-    skin:"subsurface scattering skin shader, micro-detail skin pores, translucent skin layers, realistic melanin gradients, 3D rendered hyper-texture",
-    suf:"Octane Render quality, V-Ray photorealism, 3D studio cinematic lighting, AAA cutscene quality, Epic Games MetaHuman level of detail, 8K texture maps"
+    pre:"photorealistic CGI render, Unreal Engine 5 Lumen real-time ray tracing, AAA game cinematic cutscene quality",
+    skin:"subsurface scattering skin shader, micro-detail pore texture, translucent skin layers, 8K texture maps on geometry",
+    suf:"Octane Render photorealism, V-Ray studio quality, Epic Games MetaHuman detail level, 3D studio cinematic lighting"
   },
   PVCRESIN:{
-    pre:"high-end PVC anime figure photography, premium resin statue collectible, 1/6 scale figurine masterpiece, hand-painted collector art figure",
-    skin:"painted resin surface texture, figure material gloss finish, hand-painted anime detail, acrylic paint on figure, matte and gloss finish combination",
-    suf:"Good Smile Company figure quality, Kotobukiya premium statue, figure photography on white seamless background, studio product photography, collector edition"
+    pre:"premium PVC collectible figure photography, high-end resin statue, 1/6 scale masterpiece, hand-painted detail",
+    skin:"painted PVC surface texture, vinyl material gloss finish, hand-painted anime skin detail, matte-gloss combination",
+    suf:"Good Smile Company figure quality, Kotobukiya premium statue, white seamless studio product photography"
+  },
+  GYBLY:{
+    pre:"anime-photorealistic hybrid, anime stylized face with photorealistic body anatomy, controlled uncanny valley",
+    skin:"photorealistic skin texture on body, anime cel-shaded face, hybrid rendering technique, professional digital art",
+    suf:"anime face photorealistic body fusion, professional hybrid illustration, mature anatomically accurate character"
+  },
+  F_ANIMECGI:{
+    pre:"anime-CGI hybrid render, toon-shaded 3D geometry, Arcane series animation quality, anime face on 3D body",
+    skin:"toon shader skin on 3D geometry, anime cel-shading with subsurface scattering, Arcane-style material",
+    suf:"anime 3D hybrid masterpiece, studio animation quality, toon render with photorealistic lighting"
+  },
+  F_PVCREAL:{
+    pre:"photorealistic PVC figure placed in real environment, collectible figure meets real world, scale model photography",
+    skin:"painted PVC texture under real-world lighting, vinyl material in natural light, figure material in realistic setting",
+    suf:"scale figure in real environment, product photography meets reality, collectible statue in urban setting"
+  },
+  F_GYBDARK:{
+    pre:"dark noir photorealistic body with anime stylized eyes, realistic anatomy under noir lighting, dark hybrid",
+    skin:"photorealistic skin under deep dramatic lighting, anime eye detail glowing in noir atmosphere",
+    suf:"dark hybrid illustration, realistic noir cinematography, anime eyes piercing through darkness"
+  },
+  F_ANIMERESIN:{
+    pre:"cel-shaded anime art style on collectible figure, anime illustration rendered as vinyl figure photography",
+    skin:"smooth vinyl surface with anime cel-shading, gloss finish on anime-style skin, figure material",
+    suf:"anime figure collectible photography, vinyl gloss cel-shade, studio product lighting on anime figure"
+  },
+  F_NEURALPVC:{
+    pre:"neural hyperdetailed render of collectible figure, impossible microscopic detail on PVC plastic surface",
+    skin:"neural-rendered detail on vinyl surface, every paint stroke microscopically visible, impossible plastic detail",
+    suf:"neural impossible detail on figure surface, quantum-level PVC material render, collector masterpiece"
+  },
+  F_CINEANIME:{
+    pre:"IMAX cinematic anime, theatrical film composition with anime stylization, movie-quality animation",
+    skin:"cinematic lighting on anime skin, film grain texture over anime style, theatrical color grading",
+    suf:"cinematic anime masterpiece, IMAX film quality, theatrical release animation standard"
   }
 };
-const ML={
-  1:{t:"athletic defined physique, soft visible abs, toned feminine curves",b:"Athletic",bg:"rgba(100,200,100,.2)",c:"#64c864"},
-  2:{t:"well defined abs, visible obliques, toned arms, athletic feminine build",b:"Defined",bg:"rgba(100,200,255,.2)",c:"#64c8ff"},
-  3:{t:"ultra defined 6-pack abs, sharp obliques, capped deltoids, powerful feminine body",b:"Ultra Defined",bg:"rgba(233,69,96,.2)",c:"#e94560"},
-  4:{t:"extreme muscular definition, 8-pack rectus abdominis, vascular arms, bodybuilder-feminine",b:"Extreme",bg:"rgba(255,150,50,.2)",c:"#ff9632"},
-  5:{t:"brutal shredded physique, every muscle group hyper-visible, hardcore feminine bodybuilder",b:"Brutal",bg:"rgba(200,50,50,.2)",c:"#ff4444"}
-};
-const NEG={
-  ANIME:"--no 3D render, CGI, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, chibi, childlike, text, watermark, UI elements, grayscale",
-  PHOTO:"--no cartoon, anime, painting, illustration, bad anatomy, extra fingers, deformed, blurry, low quality, text, watermark, CGI, oversaturated",
-  SHONEN:"--no realistic, 3D render, CGI, bad anatomy, extra fingers, deformed, blurry, low quality, chibi, text, watermark, western cartoon",
-  NEURAL:"--no cartoon, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, chibi, text, watermark, low resolution, artifacts",
-  DARKPRO:"--no bright colors, oversaturated, clean background, flat lighting, chibi, low quality, bad anatomy, extra fingers, deformed hands, masculine features, text, watermark",
-  CGI3D:"--no 2D illustration, anime flat colors, painted, hand-drawn, cartoon, bad anatomy, extra fingers, deformed, low poly, blurry, text, watermark, low quality",
-  PVCRESIN:"--no background clutter, bad anatomy, extra fingers, deformed hands, masculine features, blurry, low quality, soft sculpture, clay appearance, text, watermark, painted background, gradient background"
+
+var ML={
+  1:"athletic defined physique, soft abs visible, toned feminine curves, lean muscle tone",
+  2:"well defined abs, visible obliques, toned arms and shoulders, athletic feminine build",
+  3:"ultra defined 6-pack abs, sharp obliques, capped deltoids, powerful defined feminine physique",
+  4:"extreme muscular definition, 8-pack rectus abdominis, vascular forearms, bodybuilder-feminine aesthetic",
+  5:"brutal shredded physique, every major muscle group hyper-defined, hardcore feminine bodybuilder, extreme vascularity"
 };
 
-function mkPrompt(char,ov){
-  if(!char)return"Select a character to generate a prompt…";
-  ov=ov||{};
-  const mode=ov.mode||S.mode,ml=ov.ml||S.ml,
-        pose=ov.pose||S.pose,cloth=ov.cloth||S.cloth,
-        bg=ov.bg||S.bg,light=ov.light||S.light;
-  const M=MODES[mode],L=ML[ml];
-  const neg=NEG[mode]||NEG.ANIME;
-  // PVC Resin overrides: figure-specific background/lighting
-  const finalBg=(mode==="PVCRESIN")?"white seamless studio background, product photography setup":bg;
-  const finalLight=(mode==="PVCRESIN")?"soft box studio lighting, even diffused light, no harsh shadows":light;
-  const ar=(mode==="PVCRESIN")?"--ar 2:3":"--ar 9:16";
-  return M.pre+", "+char.p+", "+L.t+", "+M.skin+", wearing "+cloth+", "+char.e+" emblem detail, "+pose+" pose, confident expression, dynamic angle, "+finalLight+", "+finalBg+", "+M.suf+", dominant colors: "+char.c.join(", ")+", "+ar+" --style raw --v 8.1 "+neg;
-}
+// MJ parameters integrated positively (no --no)
+var QUALITY_DESC={
+  ANIME:"photorealistic anime hybrid quality, maintaining anatomical accuracy, adult mature character proportions, professional illustration standard",
+  PHOTO:"anatomically accurate, avoiding distortion, maintaining proportional realism, professional photography quality",
+  SHONEN:"adult manga proportions, anatomically plausible exaggeration, professional manga standard",
+  NEURAL:"anatomically perfect form, flawless proportions, beyond photorealistic accuracy",
+  DARKPRO:"adult mature character, anatomically accurate under dramatic lighting, professional dark illustration",
+  CGI3D:"anatomically accurate 3D model, correct joint geometry, professional AAA character model",
+  PVCRESIN:"figure-scale proportions accurate, professional collectible quality, no manufacturing defects",
+  GYBLY:"anatomically accurate hybrid, proportional consistency, mature adult character",
+  F_ANIMECGI:"anatomically accurate toon render, correct geometry, professional studio standard",
+  F_PVCREAL:"accurate scale proportions, physically plausible figure in environment",
+  F_GYBDARK:"anatomically accurate under noir lighting, mature adult figure",
+  F_ANIMERESIN:"accurate figure proportions, professional collectible standard",
+  F_NEURALPVC:"perfect figure geometry, professional collector quality",
+  F_CINEANIME:"cinematically accurate proportions, theatrical quality animation"
+};
 
-const VPOSES=["standing heroic","dynamic action crouching","walking forward confident","power stance arms raised","mid-air action leap flying"];
-const VCLOTHS=["classic superhero costume","casual streetwear reimagined superhero outfit","tactical military outfit","battle-damaged worn costume with tears","powered-up glowing energy aura costume"];
-const VLIGHTS=["dramatic rim lighting, strong contrast shadows","soft diffused studio lighting, gentle shadows","golden hour warm sunlight, subtle lens flare","neon cyberpunk colored light, vibrant reflections","bioluminescent ethereal glow, mystical radiance"];
-
-function mkVariants(char){
-  return Array.from({length:5},function(_,i){return mkPrompt(char,{pose:VPOSES[i],cloth:VCLOTHS[i],light:VLIGHTS[i],ml:i+1});});
-}
-
-// ══════════════════ STATE ══════════════════
-var S={char:null,mode:"ANIME",ml:3,pose:"standing heroic",cloth:"classic superhero costume",bg:"minimal clean gradient background",light:"soft diffused studio lighting, gentle shadows",filter:"All",q:"",showFav:false};
-var HIST=JSON.parse(localStorage.getItem("km_hist")||"[]");
-var FAVS=new Set(JSON.parse(localStorage.getItem("km_favs")||"[]"));
-var varPrompts=[];
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+var S={
+  char:null,mode:"ANIME",musc:3,
+  sty:100,chaos:0,weird:0,
+  pose:"standing heroic confident",
+  cloth:"classic faithful superhero costume",
+  bg:"minimal clean gradient backdrop",
+  light:"soft diffused studio lighting even fill light",
+  filter:"All",q:"",showFav:false
+};
+var HIST=JSON.parse(localStorage.getItem("km3_h")||"[]");
+var FAVS=new Set(JSON.parse(localStorage.getItem("km3_f")||"[]"));
 var twTimer=null;
 
-// ══════════════════ RENDER CHARS ══════════════════
-var C_COLOR={black:"#555",red:"#e94560",blue:"#4070ff",gold:"#f5c542",green:"#3dc878",purple:"#9060d0",silver:"#b0b0c0",white:"#d0d0d0",orange:"#f5a020",pink:"#e94590",yellow:"#f5e020",auburn:"#c06030",scarlet:"#cc2020",crimson:"#b01030",gray:"#808090",blonde:"#e0c040"};
-function cc(char){return C_COLOR[char.c[0]]||"#e94560";}
+// ══════════════════════════════════════════════════════
+// PROMPT ENGINE
+// ══════════════════════════════════════════════════════
+function mkPrompt(char,ov){
+  if(!char)return"Select a character to begin…";
+  ov=ov||{};
+  var mode=ov.mode||S.mode,musc=ov.musc||S.musc,
+      pose=ov.pose||S.pose,cloth=ov.cloth||S.cloth,
+      bg=ov.bg||S.bg,light=ov.light||S.light;
+  var M=MODES[mode],muscle=ML[musc],quality=QUALITY_DESC[mode]||QUALITY_DESC.ANIME;
+  var isPVC=(mode==="PVCRESIN"||mode==="F_ANIMERESIN"||mode==="F_NEURALPVC"||mode==="F_PVCREAL");
+  var finalBg=isPVC?"white seamless studio background, product photography setup":bg;
+  var finalLight=isPVC?"even soft-box studio lighting, professional product photography lighting":light;
+  return M.pre+", "+char.p+", "+muscle+", "+M.skin+", wearing "+cloth+", "+char.e+" emblem detail clearly visible, "+pose+" pose, confident mature expression, dynamic angle, "+finalLight+", "+finalBg+", "+M.suf+", "+quality+", color palette "+char.c.join(" and ");
+}
 
+function mkParams(ov){
+  ov=ov||{};
+  var mode=ov.mode||S.mode;
+  var sty=ov.sty!==undefined?ov.sty:S.sty;
+  var chaos=ov.chaos!==undefined?ov.chaos:S.chaos;
+  var weird=ov.weird!==undefined?ov.weird:S.weird;
+  var isPVC=(mode==="PVCRESIN"||mode==="F_ANIMERESIN"||mode==="F_NEURALPVC"||mode==="F_PVCREAL");
+  var ar=isPVC?"--ar 2:3":"--ar 9:16";
+  var p=ar+" --style raw --v 8.1";
+  if(sty>0)p+=" --stylize "+sty;
+  if(chaos>0)p+=" --chaos "+chaos;
+  if(weird>0)p+=" --weird "+weird;
+  return p;
+}
+
+var VPOSES=["standing heroic confident","dynamic crouching action","walking forward powerful stride","power stance energy raised","mid-air soaring action leap"];
+var VCLOTHS=["classic faithful superhero costume","casual modern streetwear reimagined","tactical military spec-ops outfit","battle-damaged torn worn costume","powered-up glowing energy costume"];
+var VLIGHTS=["dramatic hard rim lighting deep contrast","soft diffused studio lighting even fill light","golden hour warm sunlight lens flare","neon cyberpunk colored accent lighting","bioluminescent ethereal glowing radiance"];
+var VMUSCS=[1,2,3,4,5];
+
+function mkVariants(char){
+  return Array.from({length:5},function(_,i){
+    return {prompt:mkPrompt(char,{pose:VPOSES[i],cloth:VCLOTHS[i],light:VLIGHTS[i],musc:VMUSCS[i]}),
+            params:mkParams({sty:S.sty,chaos:S.chaos,weird:S.weird})};
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// COLOR MAP
+// ══════════════════════════════════════════════════════
+var CC={black:"#4a4a5a",red:"#e94560",blue:"#4878ff",gold:"#f0c040",green:"#30c870",purple:"#9060d0",silver:"#a0a0c0",white:"#d0d0e0",orange:"#f0a020",pink:"#e84590",yellow:"#e8e020",auburn:"#b85030",scarlet:"#cc2020",crimson:"#b01030",gray:"#7080a0",blonde:"#d8c040"};
+function gc(char){return CC[char.c[0]]||"#e94560";}
+
+// ══════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════
 function renderChars(){
   var g=document.getElementById("charGrid");
   var list=CHARS.filter(function(c){
@@ -477,196 +661,281 @@ function renderChars(){
     var fq=!S.q||c.n.toLowerCase().indexOf(S.q.toLowerCase())>=0||c.s.toLowerCase().indexOf(S.q.toLowerCase())>=0;
     return fu&&fq;
   });
+  if(!list.length){g.innerHTML='<div class="empty">No results</div>';return;}
   g.innerHTML=list.map(function(c){
-    return'<div class="ccard'+(S.char&&S.char.id===c.id?" sel":"")+'" onclick="pickChar(\''+c.id+'\')">'
-      +'<span class="cbadge b'+c.u+'">'+c.u+'</span>'
-      +'<div class="cavatar" style="background:'+cc(c)+'22;color:'+cc(c)+'">'+c.n[0]+'</div>'
-      +'<div class="cname">'+c.n+'</div>'
-      +'<div class="csub">'+c.s+'</div>'
+    var col=gc(c);
+    return'<div class="ci'+(S.char&&S.char.id===c.id?" on":"")+'" onclick="pickChar(\''+c.id+'\')">'
+      +'<div class="cav" style="background:'+col+'22;color:'+col+'">'+c.n[0]+'</div>'
+      +'<div class="ci-info"><div class="ci-name">'+c.n+'</div><div class="ci-sub">'+c.s+'</div></div>'
+      +'<span class="ubadge u'+c.u+'">'+c.u+'</span>'
       +'</div>';
   }).join("");
 }
 
 function pickChar(id){
   S.char=CHARS.filter(function(c){return c.id===id;})[0];
-  renderChars();renderInfo();typePrompt(mkPrompt(S.char));
+  renderChars();renderCharBar();typePrompt();
 }
 
-function renderInfo(){
-  var card=document.getElementById("cinfoCard");
-  var body=document.getElementById("cinfoBody");
-  if(!S.char){card.style.display="none";return;}
-  card.style.display="block";
-  body.innerHTML='<div class="cavatar" style="width:52px;height:52px;font-size:1.6rem;flex-shrink:0;background:'+cc(S.char)+'22;color:'+cc(S.char)+'">'+S.char.n[0]+'</div>'
-    +'<div><div style="font-weight:700;font-size:.95rem">'+S.char.n+'</div>'
-    +'<div style="font-size:.78rem;color:var(--muted)">'+S.char.s+'</div>'
-    +'<div class="ctags">'+S.char.t.map(function(t){return'<span class="ctag">'+t+'</span>';}).join("")+'</div></div>';
+function renderCharBar(){
+  var bar=document.getElementById("charbar");
+  if(!S.char){bar.classList.remove("vis");return;}
+  bar.classList.add("vis");
+  var col=gc(S.char);
+  document.getElementById("cbAv").style.cssText="background:"+col+"22;color:"+col;
+  document.getElementById("cbAv").textContent=S.char.n[0];
+  document.getElementById("cbName").textContent=S.char.n;
+  document.getElementById("cbSub").textContent=S.char.s;
+  document.getElementById("cbTags").innerHTML=S.char.t.map(function(t){return'<span class="ctag">'+t+'</span>';}).join("");
 }
 
-// ══════════════════ TYPEWRITER ══════════════════
-function typePrompt(text){
-  var el=document.getElementById("promptText");
+function renderParams(){
+  var p=mkParams();
+  var el=document.getElementById("pparams");
+  el.innerHTML=p.split(" ").filter(Boolean).map(function(tok){return'<span class="pp">'+tok+'</span>';}).join("");
+}
+
+// ══════════════════════════════════════════════════════
+// TYPEWRITER
+// ══════════════════════════════════════════════════════
+function typePrompt(){
+  if(!S.char)return;
+  var text=mkPrompt(S.char);
+  var el=document.getElementById("pbox");
   if(twTimer)clearTimeout(twTimer);
-  if(!S.char){el.textContent=text;return;}
   el.innerHTML="";var i=0;
+  renderParams();
   function run(){
     if(i<text.length){
       el.innerHTML=text.slice(0,++i)+'<span class="cursor"></span>';
-      twTimer=setTimeout(run,7);
-    }else{el.textContent=text;addHist(text);}
+      twTimer=setTimeout(run,6);
+    }else{
+      el.textContent=text;
+      addHist(text);
+    }
   }run();
 }
 
-function setInstant(text){
+function setInstant(){
+  if(!S.char)return;
   if(twTimer)clearTimeout(twTimer);
-  document.getElementById("promptText").textContent=text;
-  if(S.char)addHist(text);
+  var text=mkPrompt(S.char);
+  document.getElementById("pbox").textContent=text;
+  renderParams();
+  addHist(text);
 }
 
-// ══════════════════ HISTORY ══════════════════
+// ══════════════════════════════════════════════════════
+// SLIDERS
+// ══════════════════════════════════════════════════════
+function styleSlider(el,color){
+  var min=+el.min,max=+el.max,val=+el.value;
+  var pct=((val-min)/(max-min))*100;
+  el.style.background="linear-gradient(to right,"+color+" 0%,"+color+" "+pct+"%, #2a2a50 "+pct+"%, #2a2a50 100%)";
+  el.style.setProperty("--thumb-color",color);
+}
+
+// ══════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════
 function addHist(prompt){
   if(HIST.length&&HIST[0].p===prompt)return;
   HIST.unshift({p:prompt,t:new Date().toLocaleTimeString(),id:Date.now()});
-  if(HIST.length>20)HIST.pop();
-  save();renderHist();
+  if(HIST.length>25)HIST.pop();
+  persist();renderHist();
   document.getElementById("hCount").textContent=HIST.length;
 }
-function save(){
-  localStorage.setItem("km_hist",JSON.stringify(HIST));
-  localStorage.setItem("km_favs",JSON.stringify(Array.from(FAVS)));
+function persist(){
+  localStorage.setItem("km3_h",JSON.stringify(HIST));
+  localStorage.setItem("km3_f",JSON.stringify(Array.from(FAVS)));
 }
 function renderHist(){
-  var list=document.getElementById("hList");
+  var list=document.getElementById("histList");
   var items=S.showFav?HIST.filter(function(h){return FAVS.has(h.id);}):HIST;
   if(!items.length){list.innerHTML='<div class="empty">No prompts yet</div>';return;}
   list.innerHTML=items.map(function(h){
+    var enc=btoa(unescape(encodeURIComponent(h.p)));
     return'<div class="hitem">'
-      +'<div style="flex:1;overflow:hidden"><div class="htext">'+h.p+'</div><div class="htime">'+h.t+'</div></div>'
-      +'<button class="ibtn'+(FAVS.has(h.id)?" fav-on":"")+'" onclick="togFav('+h.id+')">&#11088;</button>'
-      +'<button class="ibtn" onclick="cpEnc(\''+btoa(unescape(encodeURIComponent(h.p)))+'\',this)">&#128203;</button>'
-      +'</div>';
+      +'<div style="flex:1;overflow:hidden"><div class="htext">'+escH(h.p)+'</div></div>'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">'
+      +'<div class="htime">'+h.t+'</div>'
+      +'<div class="iacts">'
+      +'<div class="ia'+(FAVS.has(h.id)?" fav":"")+'" onclick="togFav('+h.id+')">&#9733;</div>'
+      +'<div class="ia" onclick="cpEnc(\''+enc+'\',this)">&#8966;</div>'
+      +'</div></div></div>';
   }).join("");
 }
-function togFav(id){if(FAVS.has(id))FAVS.delete(id);else FAVS.add(id);save();renderHist();}
-function cpEnc(enc,btn){
+function escH(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function togFav(id){if(FAVS.has(id))FAVS.delete(id);else FAVS.add(id);persist();renderHist();}
+function cpEnc(enc,el){
   var text=decodeURIComponent(escape(atob(enc)));
   navigator.clipboard.writeText(text).then(function(){
-    var orig=btn.innerHTML;btn.innerHTML="&#9989;";btn.classList.add("ok");
-    setTimeout(function(){btn.innerHTML=orig;btn.classList.remove("ok");},1400);
+    var orig=el.innerHTML;el.innerHTML="&#10003;";el.classList.add("ok");
+    setTimeout(function(){el.innerHTML=orig;el.classList.remove("ok");},1200);
     toast("Copied!");
   });
 }
 function toast(msg){
   var t=document.getElementById("toast");
   t.textContent=msg;t.classList.add("show");
-  setTimeout(function(){t.classList.remove("show");},2400);
+  setTimeout(function(){t.classList.remove("show");},2200);
 }
 
-// ══════════════════ MUSCLE BADGE ══════════════════
-function updateBadge(v){
-  var L=ML[v],badge=document.getElementById("mBadge"),sl=document.getElementById("mSlider");
-  badge.textContent="Lv"+v+" — "+L.b;badge.style.background=L.bg;badge.style.color=L.c;
-  var pct=((v-1)/4)*100;
-  sl.style.background="linear-gradient(to right,"+L.c+" 0%,"+L.c+" "+pct+"%,#2a2a40 "+pct+"%,#2a2a40 100%)";
+// ══════════════════════════════════════════════════════
+// MODE PILL
+// ══════════════════════════════════════════════════════
+function updateModePill(mode,isFusion){
+  var pill=document.getElementById("modePill");
+  pill.textContent=mode.replace("F_","").replace("FUSION_","");
+  if(isFusion){pill.className="pill pill-mode pur";}
+  else{pill.className="pill pill-mode";}
 }
 
-// ══════════════════ INIT ══════════════════
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
 document.addEventListener("DOMContentLoaded",function(){
   renderChars();renderHist();
   document.getElementById("hCount").textContent=HIST.length;
-  updateBadge(3);
 
-  document.querySelectorAll(".ftab[data-f]").forEach(function(t){
+  // char search
+  document.getElementById("charSearch").addEventListener("input",function(e){S.q=e.target.value;renderChars();});
+
+  // filter tabs
+  document.querySelectorAll(".ftab").forEach(function(t){
     t.addEventListener("click",function(){
-      document.querySelectorAll(".ftab[data-f]").forEach(function(x){x.classList.remove("on");});
+      document.querySelectorAll(".ftab").forEach(function(x){x.classList.remove("on");});
       t.classList.add("on");S.filter=t.dataset.f;renderChars();
     });
   });
 
-  document.getElementById("charSearch").addEventListener("input",function(e){S.q=e.target.value;renderChars();});
-
-  document.querySelectorAll(".mbtn").forEach(function(b){
+  // control tabs
+  document.querySelectorAll(".tbtn").forEach(function(b){
     b.addEventListener("click",function(){
-      document.querySelectorAll(".mbtn").forEach(function(x){x.classList.remove("on");});
-      b.classList.add("on");S.mode=b.dataset.mode;
-      // Update header mode badge
-      var badge=document.getElementById("modeBadge");
-      if(badge){
-        var isPremium=b.classList.contains("premium");
-        badge.textContent=b.querySelector(".mname").textContent;
-        badge.style.background=isPremium?"rgba(180,100,255,.18)":"rgba(233,69,96,.18)";
-        badge.style.color=isPremium?"#c87aff":"#e94560";
-      }
-      if(S.char)setInstant(mkPrompt(S.char));
+      document.querySelectorAll(".tbtn").forEach(function(x){x.classList.remove("on");});
+      document.querySelectorAll(".tpanel").forEach(function(x){x.classList.remove("on");});
+      b.classList.add("on");
+      document.getElementById("tab-"+b.dataset.tab).classList.add("on");
     });
   });
 
-  document.getElementById("mSlider").addEventListener("input",function(e){
-    S.ml=+e.target.value;updateBadge(S.ml);
-    if(S.char)setInstant(mkPrompt(S.char));
-  });
-
-  document.querySelectorAll(".obtn").forEach(function(b){
-    b.addEventListener("click",function(){
-      var g=b.dataset.g;
-      document.querySelectorAll('.obtn[data-g="'+g+'"]').forEach(function(x){x.classList.remove("on");});
-      b.classList.add("on");S[g]=b.dataset.v;
-      if(S.char)setInstant(mkPrompt(S.char));
+  // style rows
+  document.querySelectorAll(".srow").forEach(function(r){
+    r.addEventListener("click",function(){
+      document.querySelectorAll(".srow").forEach(function(x){x.classList.remove("on");});
+      r.classList.add("on");
+      S.mode=r.dataset.mode;
+      var isFusion=r.classList.contains("fusion");
+      updateModePill(S.mode,isFusion);
+      if(S.char)setInstant();
     });
   });
 
+  // sliders
+  var muscEl=document.getElementById("muscSlider");
+  muscEl.addEventListener("input",function(){
+    S.musc=+muscEl.value;
+    document.getElementById("muscVal").textContent=muscEl.value;
+    styleSlider(muscEl,"#e94560");
+    if(S.char)setInstant();
+  });
+  styleSlider(muscEl,"#e94560");
+
+  var styEl=document.getElementById("stySlider");
+  styEl.addEventListener("input",function(){
+    S.sty=+styEl.value;
+    document.getElementById("styVal").textContent=styEl.value;
+    styleSlider(styEl,"#e94560");
+    if(S.char){setInstant();renderParams();}
+  });
+  styleSlider(styEl,"#e94560");
+
+  var chaosEl=document.getElementById("chaosSlider");
+  chaosEl.addEventListener("input",function(){
+    S.chaos=+chaosEl.value;
+    document.getElementById("chaosVal").textContent=chaosEl.value;
+    styleSlider(chaosEl,"#f08030");
+    if(S.char){setInstant();renderParams();}
+  });
+  styleSlider(chaosEl,"#f08030");
+
+  var weirdEl=document.getElementById("weirdSlider");
+  weirdEl.addEventListener("input",function(){
+    S.weird=+weirdEl.value;
+    document.getElementById("weirdVal").textContent=weirdEl.value;
+    styleSlider(weirdEl,"#7c5cfc");
+    if(S.char){setInstant();renderParams();}
+  });
+  styleSlider(weirdEl,"#7c5cfc");
+
+  // option pickers
+  document.querySelectorAll(".oi").forEach(function(o){
+    o.addEventListener("click",function(){
+      var g=o.dataset.g;
+      document.querySelectorAll('.oi[data-g="'+g+'"]').forEach(function(x){x.classList.remove("on");});
+      o.classList.add("on");S[g]=o.dataset.v;
+      if(S.char)setInstant();
+    });
+  });
+
+  // variants
   document.getElementById("varBtn").addEventListener("click",function(){
     if(!S.char){toast("Select a character first!");return;}
-    varPrompts=mkVariants(S.char);
-    var card=document.getElementById("varCard"),list=document.getElementById("vList");
-    card.style.display="block";
-    list.innerHTML=varPrompts.map(function(v,i){
+    var variants=mkVariants(S.char);
+    document.getElementById("varSec").style.display="block";
+    document.getElementById("varList").innerHTML=variants.map(function(v,i){
+      var enc=btoa(unescape(encodeURIComponent(v.prompt+" "+v.params)));
       return'<div class="vitem">'
-        +'<div class="vtext"><strong>V'+(i+1)+'</strong> — '+v.slice(0,120)+'…</div>'
-        +'<div class="vacts"><button class="ibtn" onclick="cpEnc(\''+btoa(unescape(encodeURIComponent(v)))+'\',this)">&#128203;</button></div>'
+        +'<div class="vtext"><strong style="color:var(--t1)">V'+(i+1)+'</strong> '+escH(v.prompt.slice(0,100))+'&#8230;</div>'
+        +'<div class="iacts"><div class="ia" onclick="cpEnc(\''+enc+'\',this)">&#8966;</div></div>'
         +'</div>';
     }).join("");
-    varPrompts.forEach(function(v){addHist(v);});
+    variants.forEach(function(v){addHist(v.prompt+" "+v.params);});
     toast("5 variants generated!");
+    document.getElementById("outScroll").scrollTop=0;
   });
 
-  document.getElementById("copyMain").addEventListener("click",function(){
-    if(!S.char){toast("Generate a prompt first!");return;}
-    var text=mkPrompt(S.char);
+  // copy main
+  document.getElementById("copyBtn").addEventListener("click",function(){
+    if(!S.char){toast("Select a character first!");return;}
+    var text=mkPrompt(S.char)+" "+mkParams();
     navigator.clipboard.writeText(text).then(function(){
-      var btn=document.getElementById("copyMain");btn.innerHTML="&#9989; Copied!";
-      setTimeout(function(){btn.innerHTML="&#128203; Copy Prompt";},1500);
+      var btn=document.getElementById("copyBtn");
+      btn.innerHTML="&#10003; Copied";
+      setTimeout(function(){btn.innerHTML="&#8966; Copy";},1400);
       toast("Prompt copied!");
     });
   });
 
+  // export
   document.getElementById("exportBtn").addEventListener("click",function(){
     if(!HIST.length){toast("No prompts to export!");return;}
-    var txt=HIST.map(function(h,i){return"=== Prompt "+(i+1)+" ("+h.t+") ===\n"+h.p+"\n";}).join("\n");
+    var txt=HIST.map(function(h,i){return"=== #"+(i+1)+" ("+h.t+")\n"+h.p+"\n";}).join("\n");
     var a=document.createElement("a");
     a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain"}));
-    a.download="kimify_prompts_"+(new Date().toISOString().split("T")[0])+".txt";
+    a.download="kimify_v3_"+new Date().toISOString().slice(0,10)+".txt";
     a.click();URL.revokeObjectURL(a.href);
     toast("Exported "+HIST.length+" prompts!");
   });
 
-  document.getElementById("tabAll").addEventListener("click",function(){
+  // history tabs
+  document.getElementById("htAll").addEventListener("click",function(){
     S.showFav=false;
-    document.getElementById("tabAll").classList.add("on");
-    document.getElementById("tabFav").classList.remove("on");
+    document.getElementById("htAll").classList.add("on");
+    document.getElementById("htFav").classList.remove("on");
     renderHist();
   });
-  document.getElementById("tabFav").addEventListener("click",function(){
+  document.getElementById("htFav").addEventListener("click",function(){
     S.showFav=true;
-    document.getElementById("tabFav").classList.add("on");
-    document.getElementById("tabAll").classList.remove("on");
+    document.getElementById("htFav").classList.add("on");
+    document.getElementById("htAll").classList.remove("on");
     renderHist();
   });
   document.getElementById("clearBtn").addEventListener("click",function(){
-    if(!confirm("Clear all history and favorites?"))return;
-    HIST=[];FAVS.clear();save();renderHist();
+    if(!confirm("Clear all history?"))return;
+    HIST=[];FAVS.clear();persist();renderHist();
     document.getElementById("hCount").textContent=0;
-    toast("History cleared!");
+    toast("Cleared!");
   });
 });
 </script>
