@@ -3,59 +3,14 @@ name: Deploy to Render
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Create or update Render web service
+      - name: Trigger Render deploy
         run: |
-          RENDER_KEY="rnd_hlm63B2j05CPpy98SfCnTTrBMmzM"
-          GITHUB_REPO="https://github.com/joedurufour-cmyk/kimify-motor"
-
-          # Get owner ID
-          OWNER_ID=$(curl -s "https://api.render.com/v1/owners?limit=1" \
-            -H "Authorization: Bearer $RENDER_KEY" | \
-            python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['owner']['id'])")
-
-          echo "Owner ID: $OWNER_ID"
-
-          # Check if service already exists
-          EXISTING=$(curl -s "https://api.render.com/v1/services?name=kimify-motor&limit=5" \
-            -H "Authorization: Bearer $RENDER_KEY" | \
-            python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['service']['id'] if d else '')" 2>/dev/null)
-
-          if [ -n "$EXISTING" ]; then
-            echo "Service exists: $EXISTING — triggering redeploy"
-            curl -s -X POST "https://api.render.com/v1/services/$EXISTING/deploys" \
-              -H "Authorization: Bearer $RENDER_KEY" \
-              -H "Content-Type: application/json" \
-              -d '{"clearCache":"do_not_clear"}'
-          else
-            echo "Creating new service..."
-            RESPONSE=$(curl -s -X POST "https://api.render.com/v1/services" \
-              -H "Authorization: Bearer $RENDER_KEY" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"type\": \"web_service\",
-                \"name\": \"kimify-motor\",
-                \"ownerId\": \"$OWNER_ID\",
-                \"repo\": \"$GITHUB_REPO\",
-                \"branch\": \"main\",
-                \"autoDeploy\": \"yes\",
-                \"serviceDetails\": {
-                  \"env\": \"node\",
-                  \"plan\": \"free\",
-                  \"region\": \"oregon\",
-                  \"buildCommand\": \"\",
-                  \"startCommand\": \"node server.js\",
-                  \"healthCheckPath\": \"/health\",
-                  \"envSpecificDetails\": {
-                    \"buildCommand\": \"\",
-                    \"startCommand\": \"node server.js\"
-                  }
-                }
-              }")
-            echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); s=d.get('service',{}); print('Created:', s.get('id'), s.get('serviceDetails',{}).get('url',''))"
-          fi
+          curl -s -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache":"do_not_clear"}'
