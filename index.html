@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KIMIFY MOTOR v3.0</title>
+<title>KIMIFY MOTOR v3.1</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -244,7 +244,7 @@ header{
 <div class="app">
 
 <header>
-  <div class="logo">KIMIFY <span>MOTOR</span> <sup style="font-size:8px;color:var(--t3);font-weight:400">v3.0</sup></div>
+  <div class="logo">KIMIFY <span>MOTOR</span> <sup style="font-size:8px;color:var(--t3);font-weight:400">v3.1</sup></div>
   <div class="hpills">
     <span class="pill pill-mode" id="modePill">ANIME</span>
     <span class="pill pill-cnt">History <strong id="hCount">0</strong></span>
@@ -410,7 +410,7 @@ header{
         <button class="btn btn-d" id="copyBtn">&#8966; Copy</button>
       </div>
     </div>
-    <div class="oscroll">
+    <div class="oscroll" id="outScroll">
       <div id="varSec" style="display:none">
         <div class="shd">Variants</div>
         <div id="varList"></div>
@@ -640,6 +640,7 @@ var S={
 var HIST=JSON.parse(localStorage.getItem("km3_h")||"[]");
 var FAVS=new Set(JSON.parse(localStorage.getItem("km3_f")||"[]"));
 var twTimer=null;
+var histTimer=null;
 
 // ══════════════════════════════════════════════════════
 // PROMPT ENGINE
@@ -664,8 +665,13 @@ function mkParams(ov){
   var chaos=ov.chaos!==undefined?ov.chaos:S.chaos;
   var weird=ov.weird!==undefined?ov.weird:S.weird;
   var isPVC=(mode==="PVCRESIN"||mode==="F_ANIMERESIN"||mode==="F_NEURALPVC"||mode==="F_PVCREAL");
+  var isAnime=(mode==="ANIME"||mode==="SHONEN"||mode==="GYBLY"||mode==="F_CINEANIME"||mode==="CELSHADE"||mode==="WEBTOON"||mode==="PAINTERLY");
+  var isHighQ=(mode==="NEURAL"||mode==="CGI3D"||mode==="F_ANIMECGI"||mode==="SCULPTED");
   var ar=isPVC?"--ar 2:3":"--ar 9:16";
-  var p=ar+" --style raw --v 8.1";
+  var p=ar;
+  if(isAnime){p+=" --niji 6";}else{p+=" --v 8.1";}
+  if(isHighQ){p+=" --quality 2";}
+  if(!isAnime){p+=" --style raw";}
   if(sty>0)p+=" --stylize "+sty;
   if(chaos>0)p+=" --chaos "+chaos;
   if(weird>0)p+=" --weird "+weird;
@@ -695,9 +701,10 @@ function gc(char){return CC[char.c[0]]||"#e94560";}
 // ══════════════════════════════════════════════════════
 function renderChars(){
   var g=document.getElementById("charGrid");
+  var q=S.q.toLowerCase();
   var list=CHARS.filter(function(c){
     var fu=S.filter==="All"||c.u===S.filter;
-    var fq=!S.q||c.n.toLowerCase().indexOf(S.q.toLowerCase())>=0||c.s.toLowerCase().indexOf(S.q.toLowerCase())>=0;
+    var fq=!q||c.n.toLowerCase().indexOf(q)>=0||c.s.toLowerCase().indexOf(q)>=0||c.t.some(function(tag){return tag.toLowerCase().indexOf(q)>=0;});
     return fu&&fq;
   });
   if(!list.length){g.innerHTML='<div class="empty">No results</div>';return;}
@@ -750,18 +757,18 @@ function typePrompt(){
       twTimer=setTimeout(run,6);
     }else{
       el.textContent=text;
-      addHist(text);
+      addHist(text,true);
     }
   }run();
 }
 
 function setInstant(){
   if(!S.char)return;
-  if(twTimer)clearTimeout(twTimer);
+  if(twTimer){clearTimeout(twTimer);twTimer=null;}
   var text=mkPrompt(S.char);
   document.getElementById("pbox").textContent=text;
   renderParams();
-  addHist(text);
+  addHist(text,false);
 }
 
 // ══════════════════════════════════════════════════════
@@ -777,16 +784,23 @@ function styleSlider(el,color){
 // ══════════════════════════════════════════════════════
 // HISTORY
 // ══════════════════════════════════════════════════════
-function addHist(prompt){
+function addHist(prompt,immediate){
   if(HIST.length&&HIST[0].p===prompt)return;
   HIST.unshift({p:prompt,t:new Date().toLocaleTimeString(),id:Date.now()});
   if(HIST.length>25)HIST.pop();
-  persist();renderHist();
+  renderHist();
   document.getElementById("hCount").textContent=HIST.length;
+  if(immediate){persist();}
+  else{
+    if(histTimer)clearTimeout(histTimer);
+    histTimer=setTimeout(persist,600);
+  }
 }
 function persist(){
-  localStorage.setItem("km3_h",JSON.stringify(HIST));
-  localStorage.setItem("km3_f",JSON.stringify(Array.from(FAVS)));
+  try{
+    localStorage.setItem("km3_h",JSON.stringify(HIST));
+    localStorage.setItem("km3_f",JSON.stringify(Array.from(FAVS)));
+  }catch(e){}
 }
 function renderHist(){
   var list=document.getElementById("histList");
@@ -805,12 +819,17 @@ function renderHist(){
   }).join("");
 }
 function escH(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-function togFav(id){if(FAVS.has(id))FAVS.delete(id);else FAVS.add(id);persist();renderHist();}
+function togFav(id){
+  if(FAVS.has(id))FAVS.delete(id);else FAVS.add(id);
+  persist();
+  renderHist();
+}
 function cpEnc(enc,el){
   var text=decodeURIComponent(escape(atob(enc)));
   navigator.clipboard.writeText(text).then(function(){
     var orig=el.innerHTML;el.innerHTML="&#10003;";el.classList.add("ok");
     setTimeout(function(){el.innerHTML=orig;el.classList.remove("ok");},1200);
+    addHist(text,true);
     toast("Copied!");
   });
 }
@@ -825,7 +844,10 @@ function toast(msg){
 // ══════════════════════════════════════════════════════
 function updateModePill(mode,isFusion,isSig){
   var pill=document.getElementById("modePill");
-  pill.textContent=mode.replace("F_","").replace("FUSION_","");
+  var label=mode.replace(/^F_/,"").replace(/^FUSION_/,"");
+  // Insert space before uppercase runs after first char: ANIMECGI → ANIME CGI
+  label=label.replace(/([A-Z][a-z]*)([A-Z])/g,"$1 $2");
+  pill.textContent=label;
   if(isFusion){pill.className="pill pill-mode pur";}
   else if(isSig){pill.className="pill pill-mode gold";}
   else{pill.className="pill pill-mode";}
@@ -931,7 +953,6 @@ document.addEventListener("DOMContentLoaded",function(){
         +'<div class="iacts"><div class="ia" onclick="cpEnc(\''+enc+'\',this)">&#8966;</div></div>'
         +'</div>';
     }).join("");
-    variants.forEach(function(v){addHist(v.prompt+" "+v.params);});
     toast("5 variants generated!");
     document.getElementById("outScroll").scrollTop=0;
   });
@@ -973,10 +994,18 @@ document.addEventListener("DOMContentLoaded",function(){
     renderHist();
   });
   document.getElementById("clearBtn").addEventListener("click",function(){
-    if(!confirm("Clear all history?"))return;
-    HIST=[];FAVS.clear();persist();renderHist();
-    document.getElementById("hCount").textContent=0;
-    toast("Cleared!");
+    var btn=document.getElementById("clearBtn");
+    if(btn.dataset.confirm==="1"){
+      HIST=[];FAVS.clear();persist();renderHist();
+      document.getElementById("hCount").textContent=0;
+      toast("Cleared!");
+      btn.textContent="Clear";
+      delete btn.dataset.confirm;
+    }else{
+      btn.textContent="Sure?";
+      btn.dataset.confirm="1";
+      setTimeout(function(){btn.textContent="Clear";delete btn.dataset.confirm;},2500);
+    }
   });
 });
 </script>
